@@ -53,6 +53,8 @@ void ModuleNetworkingServer::onGui()
 		ImGui::Text(" - Disconnection timeout (s): %f", DISCONNECT_TIMEOUT_SECONDS);
 		ImGui::Text(" - Pings Received : %i", pingsReceived);
 		ImGui::Checkbox("Block Pings", &blockPingsSend);
+		ImGui::Checkbox("Disconnection by pings", &disconnectionByPings);
+
 		ImGui::Separator();
 
 		ImGui::Text("Replication");
@@ -135,12 +137,20 @@ void ModuleNetworkingServer::onPacketReceived(const InputMemoryStream &packet, c
 				sendPacket(welcomePacket, fromAddress);
 
 				// Send all network objects to the new player
+				//OutputMemoryStream initialNetworkObjects;
+				//initialNetworkObjects << ServerMessage::Replication;
+
 				uint16 networkGameObjectsCount;
 				GameObject *networkGameObjects[MAX_NETWORK_OBJECTS];
 				App->modLinkingContext->getNetworkGameObjects(networkGameObjects, &networkGameObjectsCount);
 				for (uint16 i = 0; i < networkGameObjectsCount; ++i) {
 					GameObject *gameObject = networkGameObjects[i];
-
+					if (gameObject->networkId != proxy->gameObject->networkId)
+					{
+						// TODO(jesus): Notify this proxy's replication manager about the creation of this game object
+						proxy->replicationManager.create(gameObject->networkId);
+						proxy->replicationManager.update(gameObject->networkId);
+					}
 					// TODO(jesus): Notify the new client proxy's replication manager about the creation of this game object
 				}
 
@@ -452,7 +462,7 @@ void ModuleNetworkingServer::manageSendReplication() {
 }
 
 void ModuleNetworkingServer::manageReceivePing(ClientProxy * clientProxy) {
-	if (clientProxy->receivePingTimer.ReadSeconds() > DISCONNECT_TIMEOUT_SECONDS)
+	if (clientProxy->receivePingTimer.ReadSeconds() > DISCONNECT_TIMEOUT_SECONDS && disconnectionByPings)
 		destroyClientProxy(clientProxy);
 }
 

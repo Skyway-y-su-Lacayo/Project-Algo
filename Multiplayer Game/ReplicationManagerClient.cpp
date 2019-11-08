@@ -20,6 +20,13 @@ void ReplicationManagerClient::read(const InputMemoryStream & packet) {
 				spawnObject(tag);
 				break;
 			}
+			case ReplicationAction::CREATE_EXISTING:
+			{
+				uint32 tag = ObjectType::EMPTY;
+				packet >> tag;
+				uint32 networkID = 0;
+				packet >> networkID;
+			}
 			case ReplicationAction::UPDATE:
 			{
 				
@@ -58,7 +65,26 @@ void ReplicationManagerClient::spawnObject(int tag) {
 		}
 		case ObjectType::LASER: 
 		{
+			App->modNetClient->spawnBullet();
+
 			break;
 		}
 	}
 }
+
+void ReplicationManagerClient::spawnExistinObject(int tag, uint32 networkID)
+{
+	switch (tag) {
+	case ObjectType::SPACESHIP:
+	{
+		App->modNetClient->spawnExistingPlayer(networkID);
+		break;
+	}
+	case ObjectType::LASER:
+	{
+		break;
+	}
+	}
+}
+
+

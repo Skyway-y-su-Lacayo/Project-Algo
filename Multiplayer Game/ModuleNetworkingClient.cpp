@@ -95,6 +95,7 @@ void ModuleNetworkingClient::onGui()
 			ImGui::Text(" - Disconnection timeout (s): %f", DISCONNECT_TIMEOUT_SECONDS);
 			ImGui::Text(" - Pings Received : %i", pingsReceived);
 			ImGui::Checkbox("Block Pings", &blockPingsSend);
+			ImGui::Checkbox("Disconnection by pings", &disconnectionByPings);
 
 			ImGui::Separator();
 
@@ -246,7 +247,7 @@ void ModuleNetworkingClient::initializePing() {
 }
 
 void ModuleNetworkingClient::managePing(sockaddr_in otherAddress) {
-	if (receivePingTimer.ReadSeconds() > DISCONNECT_TIMEOUT_SECONDS)
+	if (receivePingTimer.ReadSeconds() > DISCONNECT_TIMEOUT_SECONDS && disconnectionByPings)
 		disconnect();
 
 	if (sendPingTimer.ReadSeconds() > PING_INTERVAL_SECONDS && !blockPingsSend) {
@@ -285,5 +286,38 @@ void ModuleNetworkingClient::spawnPlayer() {
 	App->modLinkingContext->registerNetworkGameObject(gameObject);
 }
 
+void ModuleNetworkingClient::spawnExistingPlayer(uint32 networkID)
+{
+	GameObject* gameObject = Instantiate();
+	gameObject->size = { 100, 100 };
+	gameObject->angle = 45.0f;
+
+
+	 //////Lorien: Like the previous function but we register the object with the network id we receive///////
+
+
+	// Lucas(TODO): Send spaceship type
+	//if (spaceshipType == 0) {
+	gameObject->texture = App->modResources->spacecraft1;
+	/*}
+	else if (spaceshipType == 1) {
+		clientProxy.gameObject->texture = App->modResources->spacecraft2;
+	}
+	else {
+		clientProxy.gameObject->texture = App->modResources->spacecraft3;
+	}*/
+
+	// No collider needed
+
+	// No behaviour needed
+
+	// Assign tag
+	gameObject->tag = ObjectType::SPACESHIP;
+
+	// Assign a new network identity to the object
+	App->modLinkingContext->registerNetworkGameObjectWithNetworkId(gameObject,networkID);
+}
+
 void ModuleNetworkingClient::spawnBullet() {
+
 }

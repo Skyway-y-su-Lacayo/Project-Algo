@@ -39,6 +39,8 @@ struct Spaceship : public Behaviour
 		if (input.actionLeft == ButtonState::Press)
 		{
 			GameObject * laser = App->modNetServer->spawnBullet(gameObject);
+			
+			//TODO(LORIEN) WTF DOES THIS?? if i remove it, the game crashes
 			laser->tag = gameObject->tag;
 		}
 	}

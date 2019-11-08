@@ -18,6 +18,7 @@ public:
 
 
 	void spawnPlayer();
+	void spawnExistingPlayer(uint32 networkID);
 	void spawnBullet();
 
 private:

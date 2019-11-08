@@ -5,7 +5,8 @@ enum ReplicationAction {
 	NONE,
 	CREATE,
 	DESTROY,
-	UPDATE
+	UPDATE,
+	CREATE_EXISTING
 };
 
 struct ReplicationCommand {

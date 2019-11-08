@@ -44,6 +44,7 @@ protected:
 	Timer sendPingTimer;
 	int pingsReceived = 0;
 	bool blockPingsSend = false;
+	bool disconnectionByPings = true;
 
 private:
 
