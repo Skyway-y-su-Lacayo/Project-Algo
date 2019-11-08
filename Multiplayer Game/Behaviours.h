@@ -71,6 +71,6 @@ struct Laser : public Behaviour
 		NetworkUpdate(gameObject);
 
 		const float lifetimeSeconds = 2.0f;
-		if (secondsSinceCreation > lifetimeSeconds) NetworkDestroy(gameObject);
+		//if (secondsSinceCreation > lifetimeSeconds) NetworkDestroy(gameObject);
 	}
 };

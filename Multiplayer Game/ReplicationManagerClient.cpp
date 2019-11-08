@@ -22,12 +22,17 @@ void ReplicationManagerClient::read(const InputMemoryStream & packet) {
 			}
 			case ReplicationAction::UPDATE:
 			{
-				GameObject* object = App->modLinkingContext->getNetworkGameObject(networkID);
-				float x = 0; float y = 0; float angle = 0;
-				packet >> x; packet >> y;
-				packet >> angle;
-				object->position.x = x; object->position.y = y;
-				object->angle = angle;
+				
+				if (GameObject* object = App->modLinkingContext->getNetworkGameObject(networkID))
+				{
+					float x = 0; float y = 0; float angle = 0;
+					packet >> x; packet >> y;
+					packet >> angle;
+					object->position.x = x; object->position.y = y;
+					object->angle = angle;
+				}
+				else
+					ELOG("Gameobject assigned to the NetworkID doesn not exist"); //Lorien: This does not prevent the game for crashing, but i put it here for debugging purposes
 				// Lucas(TODO): Make functions for easier serialization
 
 				break;
