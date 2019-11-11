@@ -41,13 +41,13 @@ struct Spaceship : public Behaviour
 			GameObject * laser = App->modNetServer->spawnBullet(gameObject);
 			
 			//TODO(LORIEN) WTF DOES THIS?? if i remove it, the game crashes
-			laser->tag = gameObject->tag;
+			//laser->tag = ObjectType::SPACESHIP;
 		}
 	}
 
 	void onCollisionTriggered(Collider &c1, Collider &c2) override
 	{
-		if (c2.type == ColliderType::Laser && c2.gameObject->tag != gameObject->tag)
+		if (c2.gameObject->networkId == gameObject->networkId)
 		{
 			NetworkDestroy(c2.gameObject); // Destroy the laser
 
@@ -56,6 +56,15 @@ struct Spaceship : public Behaviour
 			// the client proxy will poing to an invalid gameObject...
 			// instead, make the gameObject invisible or disconnect the client.
 		}
+		//if (c2.type == ColliderType::Laser && (int)c2.gameObject->networkId == (int)gameObject->networkId)
+		//{
+		//	NetworkDestroy(c2.gameObject); // Destroy the laser
+
+		//	// NOTE(jesus): spaceship was collided by a laser
+		//	// Be careful, if you do NetworkDestroy(gameObject) directly,
+		//	// the client proxy will poing to an invalid gameObject...
+		//	// instead, make the gameObject invisible or disconnect the client.
+		//}
 	}
 };
 

@@ -25,6 +25,7 @@ void ReplicationManagerServer::write(OutputMemoryStream & packet) {
 			case ReplicationAction::CREATE:
 			{
 				// Introduce tag to know which object to create
+				
 				GameObject* object = App->modLinkingContext->getNetworkGameObject(action.networkID);
 				packet << object->tag;
 				break;

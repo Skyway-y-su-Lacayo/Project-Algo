@@ -320,4 +320,19 @@ void ModuleNetworkingClient::spawnExistingPlayer(uint32 networkID)
 
 void ModuleNetworkingClient::spawnBullet() {
 
+	GameObject* gameObject = Instantiate();
+	gameObject->size = { 20, 60 };
+	gameObject->angle = 45.0f;
+
+	gameObject->texture = App->modResources->laser;
+
+
+	// Create behaviour
+
+
+	// Assign tag
+	gameObject->tag = ObjectType::LASER;
+
+	// Assign a new network identity to the object
+	App->modLinkingContext->registerNetworkGameObject(gameObject);
 }
