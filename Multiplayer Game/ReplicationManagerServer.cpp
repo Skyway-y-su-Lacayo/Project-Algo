@@ -34,8 +34,11 @@ void ReplicationManagerServer::write(OutputMemoryStream & packet) {
 			{
 				GameObject* object = App->modLinkingContext->getNetworkGameObject(action.networkID);
 
-				packet << object->position.x; packet << object->position.y;
-				packet << object->angle;
+				// In case an object has been destroyed during the replication interval
+				if(object){
+					packet << object->position.x; packet << object->position.y;
+					packet << object->angle;
+				}
 
 				break;
 			}
