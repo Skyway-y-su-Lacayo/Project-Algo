@@ -1,5 +1,6 @@
 #pragma once
 
+#include "ModuleNetworkingServer.h"
 struct Behaviour
 {
 	GameObject *gameObject = nullptr;
@@ -52,8 +53,10 @@ struct Spaceship : public Behaviour
 		{
 			NetworkDestroy(c2.gameObject); // Destroy the laser
 			lives -= 1;
-			if (lives < 0)
-				NetworkDestroy(gameObject);
+			if (lives <= 0){
+				App->modNetServer->destroyClientProxyByGO(c1.gameObject);
+				lives = 0;
+			}
 			
 			// NOTE(jesus): spaceship was collided by a laser
 			// Be careful, if you do NetworkDestroy(gameObject) directly,

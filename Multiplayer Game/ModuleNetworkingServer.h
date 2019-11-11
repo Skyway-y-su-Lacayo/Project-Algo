@@ -65,7 +65,8 @@ private:
 
 	ClientProxy * getClientProxy(const sockaddr_in &clientAddress);
 
-	void destroyClientProxy(ClientProxy * proxy);
+	void destroyClientProxy(ClientProxy * proxy); // Destroys spaceship as well
+
 
 	void sendPacketAll(OutputMemoryStream& data);
 
@@ -85,6 +86,12 @@ public:
 
 	// NOTE(jesus): Here go spawn methods for each type of network objects
 
+
+	//////////////////////////////////////////////////////////////////////
+	// Erase network gameobjects
+	//////////////////////////////////////////////////////////////////////
+
+	void destroyClientProxyByGO(GameObject* spaceship);
 
 
 private:

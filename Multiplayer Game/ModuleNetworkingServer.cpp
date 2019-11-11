@@ -166,7 +166,7 @@ void ModuleNetworkingServer::onPacketReceived(const InputMemoryStream &packet, c
 				WLOG("Message received: UNWELCOMED hello - from player %s", proxy->name.c_str());
 			}
 		}
-		else if (message == ClientMessage::Input) {
+		else if (message == ClientMessage::Input && proxy != nullptr) {
 			// Process the input packet and update the corresponding game object
 			if (proxy != nullptr) {
 				// Read input data
@@ -187,7 +187,7 @@ void ModuleNetworkingServer::onPacketReceived(const InputMemoryStream &packet, c
 				}
 			}
 		}
-		else if (message == ClientMessage::Ping) {
+		else if (message == ClientMessage::Ping && proxy != nullptr) {
 			proxy->receivePingTimer.Start();
 			pingsReceived++;
 		}
@@ -205,13 +205,14 @@ void ModuleNetworkingServer::onUpdate()
 	if (state == ServerState::Listening)
 	{
 		// Update clients
+
 		for (ClientProxy &clientProxy : clientProxies)
 		{
-			// Disconnect client if it hasen't send ping for a while
-			manageReceivePing(&clientProxy);
-			
 			if (clientProxy.connected)
 			{
+				// Disconnect client if it hasen't send ping for a while
+				manageReceivePing(&clientProxy);
+
 				OutputMemoryStream packet;
 				packet << ServerMessage::Replication;
 
@@ -244,13 +245,6 @@ void ModuleNetworkingServer::onConnectionReset(const sockaddr_in & fromAddress)
 				clientProxies[i].replicationManager.destroy(proxy->gameObject->networkId);
 			}
 		}
-
-		// Unregister the network identity
-		App->modLinkingContext->unregisterNetworkGameObject(proxy->gameObject);
-
-		// Remove its associated game object
-		Destroy(proxy->gameObject);
-
 		// Clear the client proxy
 		destroyClientProxy(proxy);
 	}
@@ -270,7 +264,7 @@ void ModuleNetworkingServer::onDisconnect()
 	// Clear all client proxies
 	for (ClientProxy &clientProxy : clientProxies)
 	{
-		destroyClientProxy(&clientProxy);
+		clientProxy = {};
 	}
 	
 	nextClientId = 0;
@@ -317,7 +311,18 @@ ModuleNetworkingServer::ClientProxy * ModuleNetworkingServer::createClientProxy(
 
 void ModuleNetworkingServer::destroyClientProxy(ClientProxy * proxy)
 {
+	destroyNetworkObject(proxy->gameObject);
 	*proxy = {};
+}
+
+void ModuleNetworkingServer::destroyClientProxyByGO(GameObject * spaceship) {
+
+	for (auto & clientProxy : clientProxies){
+		if (clientProxy.gameObject == spaceship){
+			destroyClientProxy(&clientProxy);
+			break;
+		}
+	}
 }
 
 void ModuleNetworkingServer::sendPacketAll(OutputMemoryStream& data) {
@@ -480,8 +485,10 @@ void ModuleNetworkingServer::manageSendReplication() {
 }
 
 void ModuleNetworkingServer::manageReceivePing(ClientProxy * clientProxy) {
-	if (clientProxy->receivePingTimer.ReadSeconds() > DISCONNECT_TIMEOUT_SECONDS && disconnectionByPings)
+	if (clientProxy->receivePingTimer.ReadSeconds() > DISCONNECT_TIMEOUT_SECONDS && disconnectionByPings) 
 		destroyClientProxy(clientProxy);
+	
+		
 }
 
 void ModuleNetworkingServer::manageSendPing() {
