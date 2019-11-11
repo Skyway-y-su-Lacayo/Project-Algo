@@ -33,13 +33,10 @@ void ReplicationManagerServer::write(OutputMemoryStream & packet) {
 			case ReplicationAction::UPDATE:
 			{
 				GameObject* object = App->modLinkingContext->getNetworkGameObject(action.networkID);
-				if (object)
-				{
-					packet << object->position.x; packet << object->position.y;
-					packet << object->angle;
-				}
-				else
-					ELOG("Trying to update an unexisting GameObject. It was probably destroyed");
+
+				packet << object->position.x; packet << object->position.y;
+				packet << object->angle;
+
 				break;
 			}
 			case ReplicationAction::DESTROY:
