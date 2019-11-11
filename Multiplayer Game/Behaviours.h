@@ -15,6 +15,8 @@ struct Behaviour
 
 struct Spaceship : public Behaviour
 {
+	uint32 lives = 3;
+
 	void start() override
 	{
 
@@ -39,9 +41,7 @@ struct Spaceship : public Behaviour
 		if (input.actionLeft == ButtonState::Press)
 		{
 			GameObject * laser = App->modNetServer->spawnBullet(gameObject);
-			
-			//TODO(LORIEN) WTF DOES THIS?? if i remove it, the game crashes
-			//laser->tag = ObjectType::SPACESHIP;
+
 		}
 	}
 
@@ -51,7 +51,10 @@ struct Spaceship : public Behaviour
 		if (c2.type == ColliderType::Laser && c2.gameObject->team != gameObject->team)
 		{
 			NetworkDestroy(c2.gameObject); // Destroy the laser
-			App->modLinkingContext->unregisterNetworkGameObject(gameObject);
+			lives -= 1;
+			if (lives < 0)
+				NetworkDestroy(gameObject);
+			
 			// NOTE(jesus): spaceship was collided by a laser
 			// Be careful, if you do NetworkDestroy(gameObject) directly,
 			// the client proxy will poing to an invalid gameObject...
