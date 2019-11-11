@@ -47,24 +47,16 @@ struct Spaceship : public Behaviour
 
 	void onCollisionTriggered(Collider &c1, Collider &c2) override
 	{
-		if (c2.gameObject->networkId == gameObject->networkId)
+
+		if (c2.type == ColliderType::Laser && c2.gameObject->team != gameObject->team)
 		{
 			NetworkDestroy(c2.gameObject); // Destroy the laser
-
+			App->modLinkingContext->unregisterNetworkGameObject(gameObject);
 			// NOTE(jesus): spaceship was collided by a laser
 			// Be careful, if you do NetworkDestroy(gameObject) directly,
 			// the client proxy will poing to an invalid gameObject...
 			// instead, make the gameObject invisible or disconnect the client.
 		}
-		//if (c2.type == ColliderType::Laser && (int)c2.gameObject->networkId == (int)gameObject->networkId)
-		//{
-		//	NetworkDestroy(c2.gameObject); // Destroy the laser
-
-		//	// NOTE(jesus): spaceship was collided by a laser
-		//	// Be careful, if you do NetworkDestroy(gameObject) directly,
-		//	// the client proxy will poing to an invalid gameObject...
-		//	// instead, make the gameObject invisible or disconnect the client.
-		//}
 	}
 };
 
@@ -82,6 +74,6 @@ struct Laser : public Behaviour
 		NetworkUpdate(gameObject);
 
 		const float lifetimeSeconds = 2.0f;
-		//if (secondsSinceCreation > lifetimeSeconds) NetworkDestroy(gameObject);
+		if (secondsSinceCreation > lifetimeSeconds) NetworkDestroy(gameObject);
 	}
 };

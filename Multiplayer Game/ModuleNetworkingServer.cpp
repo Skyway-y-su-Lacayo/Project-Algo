@@ -280,6 +280,8 @@ void ModuleNetworkingServer::onDisconnect()
 
 
 
+
+
 //////////////////////////////////////////////////////////////////////
 // Client proxies
 //////////////////////////////////////////////////////////////////////
@@ -326,7 +328,15 @@ void ModuleNetworkingServer::sendPacketAll(OutputMemoryStream& data) {
 	}
 }
 
-
+uint32 ModuleNetworkingServer::connectedClients()
+{
+	uint32 ret = 0;
+	for (ClientProxy &clientProxy : clientProxies) {
+		if (clientProxy.connected)
+			ret++;
+	}
+	return ret;
+}
 
 //////////////////////////////////////////////////////////////////////
 // Spawning
@@ -359,6 +369,15 @@ GameObject * ModuleNetworkingServer::spawnPlayer(ClientProxy &clientProxy, uint8
 
 	// Assign tag
 	clientProxy.gameObject->tag = ObjectType::SPACESHIP;
+
+	//Assign Team
+	if (connectedClients() % 2 == 0)
+	{
+		clientProxy.gameObject->team == ObjectTeam::TEAM_2;
+	}
+	else
+		clientProxy.gameObject->team == ObjectTeam::TEAM_1;
+
 
 	// Assign a new network identity to the object
 	App->modLinkingContext->registerNetworkGameObject(clientProxy.gameObject);
@@ -393,6 +412,7 @@ GameObject * ModuleNetworkingServer::spawnBullet(GameObject *parent)
 	// Assign tag
 	gameObject->tag = ObjectType::LASER;
 
+	gameObject->team = parent->team;
 	// Assign a new network identity to the object
 	App->modLinkingContext->registerNetworkGameObject(gameObject);
 

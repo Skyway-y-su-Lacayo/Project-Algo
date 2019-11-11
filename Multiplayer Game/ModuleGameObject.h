@@ -5,6 +5,11 @@ enum ObjectType {
 	LASER,
 	SPACESHIP
 };
+enum ObjectTeam {
+	NO_TEAM,
+	TEAM_1,
+	TEAM_2
+};
 struct GameObject
 {
 	// Transform component
@@ -33,6 +38,7 @@ struct GameObject
 
 	// Tag for custom usage
 	uint32 tag = ObjectType::EMPTY;
+	uint32 team = ObjectTeam::NO_TEAM;
 	
 private:
 
