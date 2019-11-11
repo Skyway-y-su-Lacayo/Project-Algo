@@ -372,11 +372,9 @@ GameObject * ModuleNetworkingServer::spawnPlayer(ClientProxy &clientProxy, uint8
 
 	//Assign Team
 	if (connectedClients() % 2 == 0)
-	{
-		clientProxy.gameObject->team == ObjectTeam::TEAM_2;
-	}
+		clientProxy.gameObject->team = ObjectTeam::TEAM_2;
 	else
-		clientProxy.gameObject->team == ObjectTeam::TEAM_1;
+		clientProxy.gameObject->team = ObjectTeam::TEAM_1;
 
 
 	// Assign a new network identity to the object
