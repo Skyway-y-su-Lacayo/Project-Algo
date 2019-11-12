@@ -25,25 +25,67 @@ struct Spaceship : public Behaviour
 
 	void onInput(const InputController &input) override
 	{
-		if (input.horizontalAxis != 0.0f)
+		if (input.horizontalAxis < -0.01f)
 		{
-			const float rotateSpeed = 180.0f;
-			gameObject->angle += input.horizontalAxis * rotateSpeed * Time.deltaTime;
+
+			const float advanceSpeed = 200.0f;
+			gameObject->position += vec2FromDegrees(180.0f) * advanceSpeed * Time.deltaTime;
 			NetworkUpdate(gameObject);
 		}
-
-		if (input.actionDown == ButtonState::Pressed)
+		else if (input.horizontalAxis > 0.01f)
 		{
 			const float advanceSpeed = 200.0f;
-			gameObject->position += vec2FromDegrees(gameObject->angle) * advanceSpeed * Time.deltaTime;
+			gameObject->position += vec2FromDegrees(0.0f) * advanceSpeed * Time.deltaTime;
+
+			NetworkUpdate(gameObject);
+
+		}
+
+		else if (input.verticalAxis < -0.01f)
+		{
+			const float advanceSpeed = 200.0f;
+			gameObject->position += vec2FromDegrees(270.0f) * advanceSpeed * Time.deltaTime;
+
+			NetworkUpdate(gameObject);
+		}
+		else if (input.verticalAxis > 0.01f)
+		{
+			const float advanceSpeed = 200.0f;
+			gameObject->position += vec2FromDegrees(90.0f) * advanceSpeed * Time.deltaTime;
+
+			NetworkUpdate(gameObject);
+
+		}
+
+	/*	if (input.actionDown == ButtonState::Pressed)
+		{
+			gameObject->angle = 270.0f;
+			GameObject * laser = App->modNetServer->spawnBullet(gameObject);
+
 			NetworkUpdate(gameObject);
 		}
 
-		if (input.actionLeft == ButtonState::Press)
+		else if (input.actionLeft == ButtonState::Press)
 		{
+			gameObject->angle = 180.0f;
 			GameObject * laser = App->modNetServer->spawnBullet(gameObject);
 
+			NetworkUpdate(gameObject);
 		}
+		else if (input.actionRight == ButtonState::Press)
+		{
+			gameObject->angle = 0.0f;
+			GameObject * laser = App->modNetServer->spawnBullet(gameObject);
+
+			NetworkUpdate(gameObject);
+		}
+		else if (input.actionUp == ButtonState::Press)
+		{
+			gameObject->angle = 90.0f;
+			GameObject * laser = App->modNetServer->spawnBullet(gameObject);
+
+			NetworkUpdate(gameObject);
+		}*/
 	}
 
 	void onCollisionTriggered(Collider &c1, Collider &c2) override

@@ -53,6 +53,7 @@ private:
 
 		uint32 nextExpectedInputSequenceNumber = 0;
 		InputController gamepad;
+		MouseController mouse;
 
 		Timer receivePingTimer;
 		ReplicationManagerServer replicationManager;
