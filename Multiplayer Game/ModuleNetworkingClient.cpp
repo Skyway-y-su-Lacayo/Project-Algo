@@ -185,7 +185,7 @@ void ModuleNetworkingClient::onUpdate()
 			
 			inputPacketData.mouse_x = Mouse.x;
 			inputPacketData.mouse_y = Mouse.y;
-			inputPacketData.mouseState = Mouse.buttons[3]; //Hopefully, right button
+			inputPacketData.mouseState = Mouse.buttons[0]; //Hopefully, right button
 
 			// Create packet (if there's input and the input delivery interval exceeded)
 			if (secondsSinceLastInputDelivery > inputDeliveryIntervalSeconds)

@@ -193,7 +193,7 @@ void ModuleNetworkingServer::onPacketReceived(const InputMemoryStream &packet, c
 						vec2 winSize = App->modRender->getWindowsSize();
 						proxy->mouse.x = inputData.mouse_x - winSize.x / 2;
 						proxy->mouse.y = inputData.mouse_y - winSize.y / 2;
-						proxy->mouse.buttons[3] = inputData.mouseState;
+						proxy->mouse.buttons[0] = inputData.mouseState;
 
 
 					

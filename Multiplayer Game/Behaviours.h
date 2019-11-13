@@ -45,6 +45,9 @@ struct Spaceship : public Behaviour
 
 		// Angle of go depending on mouse position
 		gameObject->angle = atan2(mouse.x, -mouse.y) * 180/PI;
+
+		if (mouse.buttons[0] == ButtonState::Press)
+			App->modNetServer->spawnBullet(gameObject);
 	}
 
 	void onCollisionTriggered(Collider &c1, Collider &c2) override
