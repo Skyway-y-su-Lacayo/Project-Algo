@@ -17,6 +17,7 @@ struct Behaviour
 struct Spaceship : public Behaviour
 {
 	uint32 lives = 3;
+	const float speed = 200.0f;
 
 	void start() override
 	{
@@ -25,37 +26,22 @@ struct Spaceship : public Behaviour
 
 	void onInput(const InputController &input) override
 	{
+
+		float normalizedSpeed = speed * Time.deltaTime;
+
 		if (input.horizontalAxis < -0.01f)
-		{
+			gameObject->position.x -= normalizedSpeed;
 
-			const float advanceSpeed = 200.0f;
-			gameObject->position += vec2FromDegrees(180.0f) * advanceSpeed * Time.deltaTime;
-			NetworkUpdate(gameObject);
-		}
-		else if (input.horizontalAxis > 0.01f)
-		{
-			const float advanceSpeed = 200.0f;
-			gameObject->position += vec2FromDegrees(0.0f) * advanceSpeed * Time.deltaTime;
+		if (input.horizontalAxis > 0.01f)
+			gameObject->position.x += normalizedSpeed;
 
-			NetworkUpdate(gameObject);
+		if (input.verticalAxis < -0.01f)
+			gameObject->position.y += normalizedSpeed;
 
-		}
+		if (input.verticalAxis > 0.01f)
+			gameObject->position.y -= normalizedSpeed;
 
-		else if (input.verticalAxis < -0.01f)
-		{
-			const float advanceSpeed = 200.0f;
-			gameObject->position += vec2FromDegrees(270.0f) * advanceSpeed * Time.deltaTime;
-
-			NetworkUpdate(gameObject);
-		}
-		else if (input.verticalAxis > 0.01f)
-		{
-			const float advanceSpeed = 200.0f;
-			gameObject->position += vec2FromDegrees(90.0f) * advanceSpeed * Time.deltaTime;
-
-			NetworkUpdate(gameObject);
-
-		}
+		NetworkUpdate(gameObject);
 
 	/*	if (input.actionDown == ButtonState::Pressed)
 		{
