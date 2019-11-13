@@ -267,7 +267,7 @@ void ModuleNetworkingClient::managePing(sockaddr_in otherAddress) {
 
 }
 
-void ModuleNetworkingClient::spawnPlayer() {
+void ModuleNetworkingClient::spawnPlayer(uint32 networkID) {
 	GameObject* gameObject = Instantiate();
 	gameObject->size = { 100, 100 };
 	gameObject->angle = 45.0f;
@@ -291,42 +291,10 @@ void ModuleNetworkingClient::spawnPlayer() {
 	gameObject->tag = ObjectType::SPACESHIP;
 
 	// Assign a new network identity to the object
-	App->modLinkingContext->registerNetworkGameObject(gameObject);
+	App->modLinkingContext->registerNetworkGameObjectWithNetworkId(gameObject, networkID);
 }
 
-void ModuleNetworkingClient::spawnExistingPlayer(uint32 networkID)
-{
-	GameObject* gameObject = Instantiate();
-	gameObject->size = { 100, 100 };
-	gameObject->angle = 45.0f;
-
-
-	 //////Lorien: Like the previous function but we register the object with the network id we receive///////
-
-
-	// Lucas(TODO): Send spaceship type
-	//if (spaceshipType == 0) {
-	gameObject->texture = App->modResources->spacecraft1;
-	/*}
-	else if (spaceshipType == 1) {
-		clientProxy.gameObject->texture = App->modResources->spacecraft2;
-	}
-	else {
-		clientProxy.gameObject->texture = App->modResources->spacecraft3;
-	}*/
-
-	// No collider needed
-
-	// No behaviour needed
-
-	// Assign tag
-	gameObject->tag = ObjectType::SPACESHIP;
-
-	// Assign a new network identity to the object
-	App->modLinkingContext->registerNetworkGameObjectWithNetworkId(gameObject,networkID);
-}
-
-void ModuleNetworkingClient::spawnBullet() {
+void ModuleNetworkingClient::spawnBullet(uint32 networkID) {
 
 	GameObject* gameObject = Instantiate();
 	gameObject->size = { 20, 60 };
@@ -342,24 +310,5 @@ void ModuleNetworkingClient::spawnBullet() {
 	gameObject->tag = ObjectType::LASER;
 
 	// Assign a new network identity to the object
-	App->modLinkingContext->registerNetworkGameObject(gameObject);
-}
-
-void ModuleNetworkingClient::spawnExistingBullet(uint32 networkID)
-{
-	GameObject* gameObject = Instantiate();
-	gameObject->size = { 20, 60 };
-	gameObject->angle = 45.0f;
-
-	gameObject->texture = App->modResources->laser;
-
-
-	// Create behaviour
-
-
-	// Assign tag
-	gameObject->tag = ObjectType::LASER;
-
-	// Assign a new network identity to the object
-	App->modLinkingContext->registerNetworkGameObjectWithNetworkId(gameObject,networkID);
+	App->modLinkingContext->registerNetworkGameObjectWithNetworkId(gameObject, networkID);
 }

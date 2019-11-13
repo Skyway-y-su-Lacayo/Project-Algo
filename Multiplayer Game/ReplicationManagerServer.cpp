@@ -3,28 +3,32 @@
 
 #include <list>
 void ReplicationManagerServer::create(uint32 networkID) {
-	actions.push_back(ReplicationCommand(networkID, ReplicationAction::CREATE));
+	uint16 arrayIndex = networkID & 0xffff;
+
+
+	actions[arrayIndex] = ReplicationCommand(networkID, ReplicationAction::CREATE);
 }
 
 void ReplicationManagerServer::destroy(uint32 networkID) {
 
 	// Erase possible events of update
-	
-	// Fill "actions to delete" list
-	std::vector<ReplicationCommand> actionsToDelete;
-	for (auto it = actions.begin(); it != actions.end(); it++) 
-		if ((*it).networkID == networkID && (*it).action == ReplicationAction::UPDATE)
-			actionsToDelete.push_back(*it);
-	
-	// Erase "actions to delete" from actions
-	for (auto it = actionsToDelete.begin(); it != actionsToDelete.end(); it++)
-		actions.erase(std::remove(actions.begin(), actions.end(), (*it)), actions.end());
-		
-	actions.push_back(ReplicationCommand(networkID, ReplicationAction::DESTROY));
+	uint16 arrayIndex = networkID & 0xffff;
+
+	// If there is no create in place, we can destroy
+	if (actions[arrayIndex].action != ReplicationAction::CREATE)
+		actions[arrayIndex] = ReplicationCommand(networkID, ReplicationAction::DESTROY);
+	// If it is, we need to erase the create command
+	else
+		actions[arrayIndex] = ReplicationCommand();
 }
 
 void ReplicationManagerServer::update(uint32 networkID) {
-	actions.push_back(ReplicationCommand(networkID, ReplicationAction::UPDATE));
+	uint16 arrayIndex = networkID & 0xffff;
+
+	// If there is no create or destroy event in place we can update
+	if(actions[arrayIndex].action != ReplicationAction::CREATE && actions[arrayIndex].action != ReplicationAction::DESTROY)
+		actions[arrayIndex] = ReplicationCommand(networkID, ReplicationAction::UPDATE);
+
 }
 
 void ReplicationManagerServer::write(OutputMemoryStream & packet) {
@@ -33,6 +37,10 @@ void ReplicationManagerServer::write(OutputMemoryStream & packet) {
 
 	for (auto action : actions) {
 		// Action and network id commun to all
+
+		if (action.action == ReplicationAction::NONE)
+			continue;
+
 		packet << action.action;
 		packet << action.networkID;
 		switch (action.action) {
@@ -64,6 +72,11 @@ void ReplicationManagerServer::write(OutputMemoryStream & packet) {
 	}
 
 	// Clear actions list after sending packet
-	actions.clear();
+	clearArray();
 
+}
+
+void ReplicationManagerServer::clearArray() {
+	for (int i = 0; i < MAX_NETWORK_OBJECTS; i++)
+		actions[i] = ReplicationCommand();
 }

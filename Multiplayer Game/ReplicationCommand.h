@@ -12,6 +12,7 @@ enum ReplicationAction {
 struct ReplicationCommand {
 public:
 
+	ReplicationCommand():networkID(0), action(ReplicationAction::NONE) {}
 	ReplicationCommand(uint32 networkID, ReplicationAction action) : networkID(networkID), action(action) {}
 	bool operator ==(ReplicationCommand const & r_c) {
 		return networkID == r_c.networkID && action == r_c.action;

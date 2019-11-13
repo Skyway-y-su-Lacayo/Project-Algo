@@ -17,10 +17,9 @@ public:
 
 
 
-	void spawnPlayer();
-	void spawnExistingPlayer(uint32 networkID);
-	void spawnBullet();
-	void spawnExistingBullet(uint32 networkID);
+	void spawnPlayer(uint32 networkID);
+	void spawnBullet(uint32 networkID);
+
 
 private:
 

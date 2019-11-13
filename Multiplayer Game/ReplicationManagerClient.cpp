@@ -17,30 +17,31 @@ void ReplicationManagerClient::read(const InputMemoryStream & packet) {
 				// Introduce tag to know which object to create
 				uint32 tag = ObjectType::EMPTY;
 				packet >> tag;
-				spawnObject(tag);
+				spawnClientObject(tag, networkID);
 				break;
 			}
 			case ReplicationAction::CREATE_EXISTING:
 			{
-				uint32 tag = ObjectType::EMPTY;
+	/*			uint32 tag = ObjectType::EMPTY;
 				packet >> tag;
 				uint32 networkID = 0;
-				packet >> networkID;
+				packet >> networkID;*/
 			}
 			case ReplicationAction::UPDATE:
 			{
+				// Lucas(TODO): Make functions for easier serialization
+				float x = 0; float y = 0; float angle = 0;
+				packet >> x; packet >> y;
+				packet >> angle;
 				
 				if (GameObject* object = App->modLinkingContext->getNetworkGameObject(networkID))
 				{
-					float x = 0; float y = 0; float angle = 0;
-					packet >> x; packet >> y;
-					packet >> angle;
 					object->position.x = x; object->position.y = y;
 					object->angle = angle;
 				}
 				else
-					ELOG("Gameobject assigned to the NetworkID doesn not exist"); //Lorien: This does not prevent the game for crashing, but i put it here for debugging purposes
-				// Lucas(TODO): Make functions for easier serialization
+					ELOG("Gameobject assigned to NetworkID %i doesn not exist", networkID); //Lorien: This does not prevent the game for crashing, but i put it here for debugging purposes
+
 
 				break;
 			}
@@ -56,34 +57,19 @@ void ReplicationManagerClient::read(const InputMemoryStream & packet) {
 	}
 }
 
-void ReplicationManagerClient::spawnObject(int tag) {
+void ReplicationManagerClient::spawnClientObject(int tag, uint32 networkID) {
 	switch (tag) {
 		case ObjectType::SPACESHIP:
 		{
-			App->modNetClient->spawnPlayer();
+			App->modNetClient->spawnPlayer(networkID);
 			break;
 		}
 		case ObjectType::LASER: 
 		{
-			App->modNetClient->spawnBullet();
+			App->modNetClient->spawnBullet(networkID);
 
 			break;
 		}
-	}
-}
-
-void ReplicationManagerClient::spawnExistinObject(int tag, uint32 networkID)
-{
-	switch (tag) {
-	case ObjectType::SPACESHIP:
-	{
-		App->modNetClient->spawnExistingPlayer(networkID);
-		break;
-	}
-	case ObjectType::LASER:
-	{
-		break;
-	}
 	}
 }
 
