@@ -21,6 +21,8 @@ public:
 
 	void present();
 
+	vec2 getWindowsSize();
+
 
 	// Attributes
 

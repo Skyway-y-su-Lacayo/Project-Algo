@@ -182,6 +182,10 @@ void ModuleNetworkingClient::onUpdate()
 			inputPacketData.horizontalAxis = Input.horizontalAxis;
 			inputPacketData.verticalAxis = Input.verticalAxis;
 			inputPacketData.buttonBits = packInputControllerButtons(Input);
+			
+			inputPacketData.mouse_x = Mouse.x;
+			inputPacketData.mouse_y = Mouse.y;
+			inputPacketData.mouseState = Mouse.buttons[3]; //Hopefully, right button
 
 			// Create packet (if there's input and the input delivery interval exceeded)
 			if (secondsSinceLastInputDelivery > inputDeliveryIntervalSeconds)
@@ -198,6 +202,10 @@ void ModuleNetworkingClient::onUpdate()
 					packet << inputPacketData.horizontalAxis;
 					packet << inputPacketData.verticalAxis;
 					packet << inputPacketData.buttonBits;
+					packet << inputPacketData.mouse_x;
+					packet << inputPacketData.mouse_y;
+					packet << inputPacketData.mouseState;
+
 				}
 
 				// Clear the queue

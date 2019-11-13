@@ -176,12 +176,30 @@ void ModuleNetworkingServer::onPacketReceived(const InputMemoryStream &packet, c
 					packet >> inputData.horizontalAxis;
 					packet >> inputData.verticalAxis;
 					packet >> inputData.buttonBits;
+					packet >> inputData.mouse_x;
+					packet >> inputData.mouse_y;
+					packet >> inputData.mouseState;
 
 					if (inputData.sequenceNumber >= proxy->nextExpectedInputSequenceNumber) {
+						// Buttons
 						proxy->gamepad.horizontalAxis = inputData.horizontalAxis;
 						proxy->gamepad.verticalAxis = inputData.verticalAxis;
 						unpackInputControllerButtons(inputData.buttonBits, proxy->gamepad);
-						proxy->gameObject->behaviour->onInput(proxy->gamepad);
+
+						// Mouse
+						// Change mouse input coordinate origin
+
+
+						vec2 winSize = App->modRender->getWindowsSize();
+						proxy->mouse.x = inputData.mouse_x - winSize.x / 2;
+						proxy->mouse.y = inputData.mouse_y - winSize.y / 2;
+						proxy->mouse.buttons[3] = inputData.mouseState;
+
+
+					
+						
+						// Send imput to gameObject to process
+						proxy->gameObject->behaviour->onInput(proxy->gamepad, proxy->mouse);
 						proxy->nextExpectedInputSequenceNumber = inputData.sequenceNumber + 1;
 					}
 				}

@@ -9,7 +9,7 @@ struct Behaviour
 
 	virtual void update() { }
 
-	virtual void onInput(const InputController &input) { }
+	virtual void onInput(const InputController &input, const MouseController &mouse) { }
 
 	virtual void onCollisionTriggered(Collider &c1, Collider &c2) { }
 };
@@ -24,7 +24,7 @@ struct Spaceship : public Behaviour
 
 	}
 
-	void onInput(const InputController &input) override
+	void onInput(const InputController &input, const MouseController &mouse) override
 	{
 
 		float normalizedSpeed = speed * Time.deltaTime;
@@ -43,35 +43,8 @@ struct Spaceship : public Behaviour
 
 		NetworkUpdate(gameObject);
 
-	/*	if (input.actionDown == ButtonState::Pressed)
-		{
-			gameObject->angle = 270.0f;
-			GameObject * laser = App->modNetServer->spawnBullet(gameObject);
-
-			NetworkUpdate(gameObject);
-		}
-
-		else if (input.actionLeft == ButtonState::Press)
-		{
-			gameObject->angle = 180.0f;
-			GameObject * laser = App->modNetServer->spawnBullet(gameObject);
-
-			NetworkUpdate(gameObject);
-		}
-		else if (input.actionRight == ButtonState::Press)
-		{
-			gameObject->angle = 0.0f;
-			GameObject * laser = App->modNetServer->spawnBullet(gameObject);
-
-			NetworkUpdate(gameObject);
-		}
-		else if (input.actionUp == ButtonState::Press)
-		{
-			gameObject->angle = 90.0f;
-			GameObject * laser = App->modNetServer->spawnBullet(gameObject);
-
-			NetworkUpdate(gameObject);
-		}*/
+		// Angle of go depending on mouse position
+		gameObject->angle = atan2(mouse.x, -mouse.y) * 180/PI;
 	}
 
 	void onCollisionTriggered(Collider &c1, Collider &c2) override

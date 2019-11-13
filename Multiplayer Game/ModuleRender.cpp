@@ -1,4 +1,5 @@
 #include "Networks.h"
+#include "ModuleRender.h"
 
 
 #define SAFE_RELEASE(lp) if (lp != nullptr) { lp->Release(); lp = nullptr; }
@@ -331,6 +332,19 @@ void ModuleRender::present()
 {
 	g_pSwapChain->Present(1, 0); // Present with vsync
 	//g_pSwapChain->Present(0, 0); // Present without vsync
+}
+
+vec2 ModuleRender::getWindowsSize() {
+
+	vec2 ret;
+
+	RECT rect;
+	GetClientRect(hwnd, &rect);
+
+	ret.x = rect.right - rect.left;
+	ret.y = rect.bottom - rect.top;
+
+	return ret;
 }
 
 static int partition(GameObject **objects, int begin, int end)
