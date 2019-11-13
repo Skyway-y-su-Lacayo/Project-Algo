@@ -5,8 +5,9 @@
 void ReplicationManagerServer::create(uint32 networkID) {
 	uint16 arrayIndex = networkID & 0xffff;
 
-
-	actions[arrayIndex] = ReplicationCommand(networkID, ReplicationAction::CREATE);
+	// Let the object be destroyed before creating a new one, just ignore the command TODO(Lucas): Look for a new networkID for the obejct or something
+	if(actions[arrayIndex].action != ReplicationAction::DESTROY)
+		actions[arrayIndex] = ReplicationCommand(networkID, ReplicationAction::CREATE);
 }
 
 void ReplicationManagerServer::destroy(uint32 networkID) {
