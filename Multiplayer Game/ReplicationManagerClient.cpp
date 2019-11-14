@@ -20,13 +20,6 @@ void ReplicationManagerClient::read(const InputMemoryStream & packet) {
 				spawnClientObject(tag, networkID);
 				break;
 			}
-			case ReplicationAction::CREATE_EXISTING:
-			{
-	/*			uint32 tag = ObjectType::EMPTY;
-				packet >> tag;
-				uint32 networkID = 0;
-				packet >> networkID;*/
-			}
 			case ReplicationAction::UPDATE:
 			{
 				// Lucas(TODO): Make functions for easier serialization
@@ -40,17 +33,19 @@ void ReplicationManagerClient::read(const InputMemoryStream & packet) {
 					object->angle = angle;
 				}
 				else
-					ELOG("Gameobject assigned to NetworkID %i doesn not exist", networkID); //Lorien: This does not prevent the game for crashing, but i put it here for debugging purposes
-
+					ELOG("Gameobject assigned to NetworkID %i doesn not exist, can't update", networkID); 
 
 				break;
 			}
 			case ReplicationAction::DESTROY:
 			{
 				GameObject* object = App->modLinkingContext->getNetworkGameObject(networkID);
-				App->modLinkingContext->unregisterNetworkGameObject(object);
-				Destroy(object);
-				// Do nothing, networkID alone is enough
+				if(object){
+					App->modLinkingContext->unregisterNetworkGameObject(object);
+					Destroy(object);
+				}
+				else
+					ELOG("Gameobject assigned to NetworkID %i doesn not exist, can't destroy", networkID);
 				break;
 			}
 		}

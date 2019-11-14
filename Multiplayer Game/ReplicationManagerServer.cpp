@@ -3,32 +3,15 @@
 
 #include <list>
 void ReplicationManagerServer::create(uint32 networkID) {
-	uint16 arrayIndex = networkID & 0xffff;
-
-	// Let the object be destroyed before creating a new one, just ignore the command TODO(Lucas): Look for a new networkID for the obejct or something
-	if(actions[arrayIndex].action != ReplicationAction::DESTROY)
-		actions[arrayIndex] = ReplicationCommand(networkID, ReplicationAction::CREATE);
+	actions.push_back(ReplicationCommand(networkID, ReplicationAction::CREATE));
 }
 
 void ReplicationManagerServer::destroy(uint32 networkID) {
-
-	// Erase possible events of update
-	uint16 arrayIndex = networkID & 0xffff;
-
-	// If there is no create in place, we can destroy
-	if (actions[arrayIndex].action != ReplicationAction::CREATE)
-		actions[arrayIndex] = ReplicationCommand(networkID, ReplicationAction::DESTROY);
-	// If it is, we need to erase the create command
-	else
-		actions[arrayIndex] = ReplicationCommand();
+	actions.push_back(ReplicationCommand(networkID, ReplicationAction::DESTROY));
 }
 
 void ReplicationManagerServer::update(uint32 networkID) {
-	uint16 arrayIndex = networkID & 0xffff;
-
-	// If there is no create or destroy event in place we can update
-	if(actions[arrayIndex].action != ReplicationAction::CREATE && actions[arrayIndex].action != ReplicationAction::DESTROY)
-		actions[arrayIndex] = ReplicationCommand(networkID, ReplicationAction::UPDATE);
+	actions.push_back(ReplicationCommand(networkID, ReplicationAction::UPDATE));
 
 }
 
@@ -39,8 +22,8 @@ void ReplicationManagerServer::write(OutputMemoryStream & packet) {
 	for (auto action : actions) {
 		// Action and network id commun to all
 
-		if (action.action == ReplicationAction::NONE)
-			continue;
+		if (action.action == ReplicationAction::UPDATE && !App->modLinkingContext->getNetworkGameObject(action.networkID))
+			continue; // Don't update if the object doesn't exist
 
 		packet << action.action;
 		packet << action.networkID;
@@ -72,12 +55,7 @@ void ReplicationManagerServer::write(OutputMemoryStream & packet) {
 		}
 	}
 
-	// Clear actions list after sending packet
-	clearArray();
+	actions.clear();
 
-}
 
-void ReplicationManagerServer::clearArray() {
-	for (int i = 0; i < MAX_NETWORK_OBJECTS; i++)
-		actions[i] = ReplicationCommand();
 }
