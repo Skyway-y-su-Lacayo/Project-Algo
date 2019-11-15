@@ -1,7 +1,6 @@
 #pragma once
 
 #include "ModuleNetworking.h"
-#include "Timer.h"
 
 class ModuleNetworkingClient : public ModuleNetworking
 {

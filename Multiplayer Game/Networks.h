@@ -227,6 +227,7 @@ extern RandomNumberGenerator Random;
 // FRAMEWORK HEADERS
 ////////////////////////////////////////////////////////////////////////
 
+#include "Timer.h"
 #include "Maths.h"
 #include "Messages.h"
 #include "ByteSwap.h"

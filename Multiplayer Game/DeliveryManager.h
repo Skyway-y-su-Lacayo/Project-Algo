@@ -1,6 +1,8 @@
 #pragma once
 class DeliveryManager;
 
+#define MS_TO_DELIVERY_TIMEOUT 1000
+//TODO: WHAT IS THIS?
 class DeliveryDelegate
 {
 public:
@@ -11,8 +13,9 @@ public:
 struct Delivery
 {
 	uint32 sequenceNumber = 0;
-	double dispatchTime = 0.0;
-	DeliveryDelegate* delegate = nullptr;
+	Timer timer;
+	bool to_remove;
+	//DeliveryDelegate* delegate = nullptr;
 };
 class DeliveryManager
 {
@@ -36,6 +39,7 @@ private:
 
 	uint32 seq_number = 0;
 	std::vector<Delivery*> pending_deliveries;
+	std::vector<uint32> pending_ack;
 
 };
 

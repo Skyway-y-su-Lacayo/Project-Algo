@@ -1,8 +1,9 @@
 #pragma once
 
-#include "Timer.h"
 
 #define SIMULATE_REAL_WORLD_CONDITIONS
+
+class Timer;
 
 class ModuleNetworking : public Module
 {
