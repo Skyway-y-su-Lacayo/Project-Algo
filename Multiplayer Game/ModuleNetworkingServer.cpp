@@ -497,7 +497,7 @@ GameObject * ModuleNetworkingServer::spawnReflectorBarrier(GameObject* parent) {
 	reflector_barrier->collider->isTrigger = true;
 
 	// Behaviour (Empty for now, since we just want to test visually)
-	reflector_barrier->behaviour = new Behaviour;
+	reflector_barrier->behaviour = new ReflectorBarrier;
 	reflector_barrier->behaviour->gameObject = reflector_barrier;
 
 	// Tag and team

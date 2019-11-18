@@ -12,6 +12,8 @@ struct Behaviour
 	virtual void onInput(const InputController &input, const MouseController &mouse) { }
 
 	virtual void onCollisionTriggered(Collider &c1, Collider &c2) { }
+
+	virtual ~Behaviour() {}
 };
 
 // Movement: WASD / PAD + Mouse for orientation
@@ -143,6 +145,29 @@ struct Reflector : public Behaviour {
 
 	~Reflector() {
 		NetworkDestroy(reflector_barrier);
+	}
+};
+
+struct ReflectorBarrier : public Behaviour {
+
+	bool create_bullet = false;
+
+	void update() override {
+		if (create_bullet) {
+			create_bullet = false;
+			GameObject* Bullet = App->modNetServer->spawnBullet(gameObject);
+			// TODO(Lucas): It should be "bouncing collider" but for now I just want to see if this works
+			App->modCollision->removeCollider(Bullet->collider);
+			LOG("BALA REBOTA: networkID = %i", Bullet->networkId);
+		}
+	}
+	void onCollisionTriggered(Collider &c1, Collider &c2) override {
+		if (c2.type == ColliderType::Laser) {
+			NetworkDestroy(c2.gameObject); // Destroy the laser
+
+			create_bullet = true; // Can't create colliders in the middle of an iteration
+
+		}
 	}
 };
 
