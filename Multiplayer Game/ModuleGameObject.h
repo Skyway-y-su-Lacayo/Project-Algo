@@ -3,7 +3,8 @@
 enum ObjectType {
 	EMPTY,
 	LASER,
-	SPACESHIP
+	SHOOTER,
+	REFLECTOR
 };
 enum ObjectTeam {
 	NO_TEAM,

@@ -300,7 +300,7 @@ void ModuleNetworkingClient::spawnPlayer(uint32 networkID) {
 	// No behaviour needed
 
 	// Assign tag
-	gameObject->tag = ObjectType::SPACESHIP;
+	gameObject->tag = ObjectType::SHOOTER;
 
 	// Assign a new network identity to the object
 	App->modLinkingContext->registerNetworkGameObjectWithNetworkId(gameObject, networkID);

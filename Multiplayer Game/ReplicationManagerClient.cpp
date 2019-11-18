@@ -54,9 +54,15 @@ void ReplicationManagerClient::read(const InputMemoryStream & packet) {
 
 void ReplicationManagerClient::spawnClientObject(int tag, uint32 networkID) {
 	switch (tag) {
-		case ObjectType::SPACESHIP:
+		case ObjectType::SHOOTER:
 		{
+			//Spawn player
 			App->modNetClient->spawnPlayer(networkID);
+			break;
+		}
+		case ObjectType::REFLECTOR: 
+		{
+			// Spawn reflector
 			break;
 		}
 		case ObjectType::LASER: 
