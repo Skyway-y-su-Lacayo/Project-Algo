@@ -68,6 +68,7 @@ void DeliveryManager::processAckdSequenceNumbers(const InputMemoryStream & packe
 			if ((*item)->sequenceNumber == (*seq_ack))
 			{
 				//CALL ON SUCCESS;
+				(*item)->delegate->onDeliverySuccess(this);
 				(*item)->to_remove = true;
 			}
 		}
@@ -94,6 +95,7 @@ void DeliveryManager::processTimedOutPackets()
 		if ((*item)->timer.Read() > MS_TO_DELIVERY_TIMEOUT)
 		{
 			//TODO CALL ON FAILED
+			(*item)->delegate->onDeliveryFailure(this);
 			(*item)->to_remove = true;
 		}
 	}
@@ -109,4 +111,17 @@ void DeliveryManager::processTimedOutPackets()
 			else
 				return;
 		}
+}
+
+void ReplicationDelegate::onDeliveryFailure(DeliveryManager * deliveryManager)
+{
+	ELOG("WARNING: Calling OnDeliveryFailure");
+	for (int i = 0; i < MAX_CLIENTS; ++i) {
+		if (networking_server->clientProxies[i].connected) {
+			OutputMemoryStream packet;
+			packet << ServerMessage::RepeatReplication;
+			networking_server->clientProxies[i].replicationManager.write(packet);
+			networking_server->sendPacket(packet, networking_server->clientProxies[i].address);
+		}
+	}
 }

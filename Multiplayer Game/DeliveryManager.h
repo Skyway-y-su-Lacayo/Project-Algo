@@ -1,5 +1,6 @@
 #pragma once
 class DeliveryManager;
+class ModuleNetworkingServer;
 
 #define MS_TO_DELIVERY_TIMEOUT 1000
 //TODO: WHAT IS THIS?
@@ -14,13 +15,15 @@ public:
 
 class ReplicationDelegate : public DeliveryDelegate
 {
+
 public:
+	ModuleNetworkingServer* networking_server;
+
 	void onDeliverySuccess(DeliveryManager* deliveryManager)
 	{}
-	void onDeliveryFailure(DeliveryManager* deliveryManager)
-	{
+	void onDeliveryFailure(DeliveryManager* deliveryManager);
 
-	}
+
 };
 
 struct Delivery
@@ -29,8 +32,9 @@ struct Delivery
 	Timer timer;
 	bool to_remove = false;
 	std::vector<ReplicationCommand> actions;
-	DeliveryDelegate* deldxegate = nullptr;
+	DeliveryDelegate* delegate = nullptr;
 };
+
 class DeliveryManager
 {
 public:

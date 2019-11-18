@@ -12,6 +12,7 @@ enum class ServerMessage
 	Welcome,
 	Unwelcome,
 	Ping, 
-	Replication
+	Replication,
+	RepeatReplication
 	
 };
