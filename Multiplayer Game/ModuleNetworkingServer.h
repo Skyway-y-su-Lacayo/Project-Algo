@@ -14,6 +14,7 @@ public:
 
 
 
+
 private:
 
 	//////////////////////////////////////////////////////////////////////
@@ -60,7 +61,7 @@ private:
 		DeliveryManager deliveryManager;
 	};
 
-	ClientProxy clientProxies[MAX_CLIENTS];
+
 
 	ClientProxy * createClientProxy();
 
@@ -76,7 +77,8 @@ private:
 
 
 public:
-
+	//I'm sorry for this -Lorién
+	ClientProxy clientProxies[MAX_CLIENTS];
 	//////////////////////////////////////////////////////////////////////
 	// Spawning network objects
 	//////////////////////////////////////////////////////////////////////
