@@ -47,6 +47,7 @@ protected:
 	bool blockPingsSend = false;
 	bool disconnectionByPings = false;
 
+
 private:
 
 	//////////////////////////////////////////////////////////////////////

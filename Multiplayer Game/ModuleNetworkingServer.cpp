@@ -81,6 +81,16 @@ void ModuleNetworkingServer::onGui()
 					ImGui::Text(" - id: %d", clientProxies[i].clientId);
 					ImGui::Text(" - Last packet time: %.04f", clientProxies[i].lastPacketReceivedTime);
 					ImGui::Text(" - Seconds since repl.: %.04f", clientProxies[i].secondsSinceLastReplication);
+
+					ImGui::Separator();
+					ImGui::Text("Delivery Manager info");
+					ImGui::Text("Seq number: %lu", clientProxies[i].deliveryManager.seq_number);
+					ImGui::Text("Pending Deliveries SIZE : %lu numbers:",clientProxies[i].deliveryManager.pending_deliveries.size());
+					for (int t = 0; t < clientProxies[i].deliveryManager.pending_deliveries.size(); t++)
+					{
+						ImGui::SameLine();
+						ImGui::Text("%lu", clientProxies[i].deliveryManager.pending_deliveries[t]->sequenceNumber);
+					}
 					
 					ImGui::Separator();
 				}
@@ -136,9 +146,7 @@ void ModuleNetworkingServer::onPacketReceived(const InputMemoryStream &packet, c
 				welcomePacket << proxy->gameObject->networkId;
 				sendPacket(welcomePacket, fromAddress);
 
-				// Send all network objects to the new player
-				//OutputMemoryStream initialNetworkObjects;
-				//initialNetworkObjects << ServerMessage::Replication;
+			
 
 				uint16 networkGameObjectsCount;
 				GameObject *networkGameObjects[MAX_NETWORK_OBJECTS];
@@ -206,6 +214,7 @@ void ModuleNetworkingServer::onPacketReceived(const InputMemoryStream &packet, c
 			}
 		}
 		else if (message == ClientMessage::Ping && proxy != nullptr) {
+		proxy->deliveryManager.processAckdSequenceNumbers(packet);
 			proxy->receivePingTimer.Start();
 			pingsReceived++;
 		}
@@ -492,6 +501,8 @@ void ModuleNetworkingServer::manageSendReplication() {
 		for (int i = 0; i < MAX_CLIENTS; ++i) {
 			if (clientProxies[i].connected) {
 				OutputMemoryStream packet;
+				packet << ServerMessage::Replication;
+				clientProxies[i].deliveryManager.writeSequenceNumber(packet);
 				clientProxies[i].replicationManager.write(packet);
 				sendPacket(packet, clientProxies[i].address);
 			}

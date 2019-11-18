@@ -17,8 +17,8 @@ void ReplicationManagerServer::update(uint32 networkID) {
 
 void ReplicationManagerServer::write(OutputMemoryStream & packet) {
 	// Iterate actions and serialize object fields when needed.
-	packet << ServerMessage::Replication;
 
+	
 	for (auto action : actions) {
 		// Action and network id commun to all
 

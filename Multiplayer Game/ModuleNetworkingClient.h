@@ -93,6 +93,7 @@ private:
 
 	// Replication
 	ReplicationManagerClient replicationClient;
+	DeliveryManager deliveryManager;
 
 
 };

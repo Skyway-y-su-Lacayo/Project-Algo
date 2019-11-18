@@ -10,6 +10,15 @@ public:
 	virtual void onDeliveryFailure(DeliveryManager* deliveryManager) = 0;
 };
 
+class ReplicationDelegate : public DeliveryDelegate
+{
+public:
+	void onDeliverySuccess(DeliveryManager* deliveryManager)
+	{}
+	void onDeliveryFailure(DeliveryManager* deliveryManager)
+	{}
+};
+
 struct Delivery
 {
 	uint32 sequenceNumber = 0;
@@ -35,11 +44,14 @@ public:
 
 	void clear();
 
-private:
-
 	uint32 seq_number = 0;
+
 	std::vector<Delivery*> pending_deliveries;
 	std::vector<uint32> pending_ack;
+
+private:
+
+
 
 };
 

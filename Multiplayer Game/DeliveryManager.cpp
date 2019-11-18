@@ -28,10 +28,24 @@ Delivery * DeliveryManager::writeSequenceNumber(OutputMemoryStream & packet)
 bool DeliveryManager::processSequenceNumber(const InputMemoryStream & packet)
 {
 	//TODO check what out of order means
+	bool ret = false;
+
 	uint32 current_seq;
 	packet >> current_seq;
 	pending_ack.push_back(current_seq);
-	return true;
+
+	
+	if (current_seq <= seq_number)
+		ret = true;
+	else
+	{
+		ELOG("A packet was discarded because the sequence number was out of order");
+		ELOG("Incoming Seq number: %lu, Own Seq number: %lu", current_seq, seq_number);
+	}
+
+
+	seq_number++;
+	return ret;
 }
 
 void DeliveryManager::writeSequenceNumbersPendingAck(OutputMemoryStream & packet)
@@ -56,9 +70,18 @@ void DeliveryManager::processAckdSequenceNumbers(const InputMemoryStream & packe
 		}
 	}
 
+	//HOW DO I DELETE THINGS
 	for (auto it = pending_deliveries.begin(); it != pending_deliveries.end(); it++)
 		if ((*it)->to_remove)
+		{
 			pending_deliveries.erase(it);
+			if (pending_deliveries.size() != 0)
+			{
+				it = pending_deliveries.begin();
+			}
+			else
+				return;
+		}
 }
 
 void DeliveryManager::processTimedOutPackets()

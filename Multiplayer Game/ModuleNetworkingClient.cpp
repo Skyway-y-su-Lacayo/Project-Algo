@@ -98,6 +98,16 @@ void ModuleNetworkingClient::onGui()
 			ImGui::Checkbox("Disconnection by pings", &disconnectionByPings);
 
 			ImGui::Separator();
+			ImGui::Text("Delivery Manager info");
+			ImGui::Text("Seq number: %lu", deliveryManager.seq_number);
+			ImGui::Text("Pending Seq numbers:");
+			for (int i = 0; i < deliveryManager.pending_ack.size(); i++)
+			{
+				ImGui::SameLine();
+				ImGui::Text("%lu", deliveryManager.pending_ack[i]);
+			}
+
+			ImGui::Separator();
 
 			ImGui::Text("Input:");
 			ImGui::InputFloat("Delivery interval (s)", &inputDeliveryIntervalSeconds, 0.01f, 0.1f, 4);
@@ -112,35 +122,37 @@ void ModuleNetworkingClient::onPacketReceived(const InputMemoryStream &packet, c
 	ServerMessage message;
 	packet >> message;
 
-	if (state == ClientState::WaitingWelcome)
-	{
-		if (message == ServerMessage::Welcome)
+		if (state == ClientState::WaitingWelcome)
 		{
-			packet >> playerId;
-			packet >> networkId;
+			if (message == ServerMessage::Welcome)
+			{
+				packet >> playerId;
+				packet >> networkId;
 
-			LOG("ModuleNetworkingClient::onPacketReceived() - Welcome from server");
-			state = ClientState::Playing;
+				LOG("ModuleNetworkingClient::onPacketReceived() - Welcome from server");
+				state = ClientState::Playing;
+			}
+			else if (message == ServerMessage::Unwelcome)
+			{
+				WLOG("ModuleNetworkingClient::onPacketReceived() - Unwelcome from server :-(");
+				disconnect();
+			}
 		}
-		else if (message == ServerMessage::Unwelcome)
+		else if (state == ClientState::Playing)
 		{
-			WLOG("ModuleNetworkingClient::onPacketReceived() - Unwelcome from server :-(");
-			disconnect();
+			// TODO(jesus): Handle incoming messages from server
+			if (message == ServerMessage::Ping) {
+				receivePingTimer.Start();
+				pingsReceived++;
+			}
+			if (message == ServerMessage::Replication) {
+				if (deliveryManager.processSequenceNumber(packet))
+				{
+					replicationClient.read(packet);
+				}
+			}
 		}
-	}
-	else if (state == ClientState::Playing)
-	{
-		// TODO(jesus): Handle incoming messages from server
-		if (message == ServerMessage::Ping) {
-			receivePingTimer.Start(); 
-			pingsReceived++;
-		}
-		if (message == ServerMessage::Replication) {
-			replicationClient.read(packet);
-		}
-
-
-	}
+	
 }
 
 void ModuleNetworkingClient::onUpdate()
@@ -194,7 +206,6 @@ void ModuleNetworkingClient::onUpdate()
 
 				OutputMemoryStream packet;
 				packet << ClientMessage::Input;
-
 				for (uint32 i = inputDataFront; i < inputDataBack; ++i)
 				{
 					InputPacketData &inputPacketData = inputData[i % ArrayCount(inputData)];
@@ -261,6 +272,7 @@ void ModuleNetworkingClient::managePing(sockaddr_in otherAddress) {
 	if (sendPingTimer.ReadSeconds() > PING_INTERVAL_SECONDS && !blockPingsSend) {
 		OutputMemoryStream out;
 		out << ClientMessage::Ping; 
+		deliveryManager.writeSequenceNumbersPendingAck(out);
 		sendPacket(out, otherAddress);
 		sendPingTimer.Start();
 	}
