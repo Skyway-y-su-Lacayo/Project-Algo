@@ -16,7 +16,7 @@ public:
 
 
 
-	void spawnPlayer(uint32 networkID);
+	void spawnPlayer(uint32 networkID, uint8 type);
 	void spawnBullet(uint32 networkID);
 
 

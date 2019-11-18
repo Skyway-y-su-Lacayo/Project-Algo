@@ -394,7 +394,7 @@ GameObject * ModuleNetworkingServer::spawnPlayer(ClientProxy & clientProxy, uint
 		}
 		case ObjectType::REFLECTOR:
 		{
-			ret = spawnPlayerShield(clientProxy);
+			ret = spawnPlayerReflector(clientProxy);
 			break;
 		}
 	}
@@ -446,8 +446,42 @@ GameObject * ModuleNetworkingServer::spawnPlayerShooter(ClientProxy &clientProxy
 	return clientProxy.gameObject;
 }
 
-GameObject * ModuleNetworkingServer::spawnPlayerShield(ClientProxy & clientProxy) {
-	return nullptr;
+GameObject * ModuleNetworkingServer::spawnPlayerReflector(ClientProxy & clientProxy) {
+
+	// Create a new game object with the player properties
+	clientProxy.gameObject = Instantiate();
+	clientProxy.gameObject->size = { 100, 100 };
+	clientProxy.gameObject->angle = 45.0f;
+
+	// Reflector texture
+	clientProxy.gameObject->texture = App->modResources->spacecraft2;
+
+	// Create collider
+	clientProxy.gameObject->collider = App->modCollision->addCollider(ColliderType::Player, clientProxy.gameObject);
+	clientProxy.gameObject->collider->isTrigger = true;
+
+	// TODO(Lucas): Should be a reflector behaviour with a collider attached
+	clientProxy.gameObject->behaviour = new Spaceship;
+	clientProxy.gameObject->behaviour->gameObject = clientProxy.gameObject;
+
+	// Assign tag
+	clientProxy.gameObject->tag = ObjectType::REFLECTOR;
+
+	// Assign team (Hardcoded to team 1 for testing purposes
+	clientProxy.gameObject->team = ObjectTeam::TEAM_1;
+
+	// Assign a new network identity to the object
+	App->modLinkingContext->registerNetworkGameObject(clientProxy.gameObject);
+
+	// Notify all client proxies' replication manager to create the object remotely
+	for (int i = 0; i < MAX_CLIENTS; ++i) {
+		if (clientProxies[i].connected) {
+			// TODO(jesus): Notify this proxy's replication manager about the creation of this game object
+			clientProxies[i].replicationManager.create(clientProxy.gameObject->networkId);
+		}
+	}
+	 
+	return clientProxy.gameObject;
 }
 
 GameObject * ModuleNetworkingServer::spawnBullet(GameObject *parent)

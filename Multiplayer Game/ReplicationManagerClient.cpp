@@ -56,13 +56,14 @@ void ReplicationManagerClient::spawnClientObject(int tag, uint32 networkID) {
 	switch (tag) {
 		case ObjectType::SHOOTER:
 		{
-			//Spawn player
-			App->modNetClient->spawnPlayer(networkID);
+			//Spawn reflector
+			App->modNetClient->spawnPlayer(networkID, tag);
 			break;
 		}
 		case ObjectType::REFLECTOR: 
 		{
 			// Spawn reflector
+			App->modNetClient->spawnPlayer(networkID, tag);
 			break;
 		}
 		case ObjectType::LASER: 

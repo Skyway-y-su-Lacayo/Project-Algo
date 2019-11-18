@@ -279,21 +279,22 @@ void ModuleNetworkingClient::managePing(sockaddr_in otherAddress) {
 
 }
 
-void ModuleNetworkingClient::spawnPlayer(uint32 networkID) {
+void ModuleNetworkingClient::spawnPlayer(uint32 networkID, uint8 tag) {
 	GameObject* gameObject = Instantiate();
 	gameObject->size = { 100, 100 };
 	gameObject->angle = 45.0f;
 
-	// Lucas(TODO): Send spaceship type
-	//if (spaceshipType == 0) {
-	gameObject->texture = App->modResources->spacecraft1;
-	/*}
-	else if (spaceshipType == 1) {
-		clientProxy.gameObject->texture = App->modResources->spacecraft2;
+
+	switch (tag) {
+		case ObjectType::SHOOTER: {
+			gameObject->texture = App->modResources->spacecraft1;
+			break;
+		}
+		case ObjectType::REFLECTOR: {
+			gameObject->texture = App->modResources->spacecraft2;
+			break;
+		}
 	}
-	else {
-		clientProxy.gameObject->texture = App->modResources->spacecraft3;
-	}*/
 
 	// No collider needed
 
