@@ -486,8 +486,7 @@ GameObject * ModuleNetworkingServer::spawnPlayerReflector(ClientProxy & clientPr
 
 GameObject * ModuleNetworkingServer::spawnReflectorBarrier(GameObject* parent) {
 	GameObject* reflector_barrier = Instantiate();
-
-	reflector_barrier->size = { 0,0 };
+	reflector_barrier->size = { 100, 50 };
 	reflector_barrier->angle = 0;
 
 	// Texture 
@@ -507,6 +506,14 @@ GameObject * ModuleNetworkingServer::spawnReflectorBarrier(GameObject* parent) {
 
 	// Register go
 	App->modLinkingContext->registerNetworkGameObject(reflector_barrier);
+
+	// Notify all client proxies' replication manager to create the object remotely
+	for (int i = 0; i < MAX_CLIENTS; ++i) {
+		if (clientProxies[i].connected) {
+			// TODO(jesus): Notify this proxy's replication manager about the creation of this game object
+			clientProxies[i].replicationManager.create(reflector_barrier->networkId);
+		}
+	}
 
 	return reflector_barrier;
 }

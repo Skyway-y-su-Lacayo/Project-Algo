@@ -280,6 +280,7 @@ void ModuleNetworkingClient::managePing(sockaddr_in otherAddress) {
 }
 
 void ModuleNetworkingClient::spawnPlayer(uint32 networkID, uint8 tag) {
+
 	GameObject* gameObject = Instantiate();
 	gameObject->size = { 100, 100 };
 	gameObject->angle = 45.0f;
@@ -301,10 +302,30 @@ void ModuleNetworkingClient::spawnPlayer(uint32 networkID, uint8 tag) {
 	// No behaviour needed
 
 	// Assign tag
-	gameObject->tag = ObjectType::SHOOTER;
+	gameObject->tag = tag;
 
 	// Assign a new network identity to the object
 	App->modLinkingContext->registerNetworkGameObjectWithNetworkId(gameObject, networkID);
+}
+
+void ModuleNetworkingClient::spawnReflector(uint32 networkID) {
+
+	GameObject* gameObject = Instantiate();
+	gameObject->size = { 100, 50 };
+	gameObject->angle = 45.0f;
+
+
+	gameObject->texture = App->modResources->reflector;
+	// No collider needed
+
+	// No behaviour needed
+
+	// Assign tag
+	gameObject->tag = ObjectType::REFLECTOR_BARRIER;
+
+	// Assign a new network identity to the object
+	App->modLinkingContext->registerNetworkGameObjectWithNetworkId(gameObject, networkID);
+
 }
 
 void ModuleNetworkingClient::spawnBullet(uint32 networkID) {

@@ -90,7 +90,7 @@ struct Reflector : public Behaviour {
 
 		// New reflector
 		reflector_barrier = App->modNetServer->spawnReflectorBarrier(gameObject);
-		reflector_barrier->size = { 100, 50 };
+
 	}
 
 	void onInput(const InputController &input, const MouseController &mouse) override {
@@ -110,6 +110,7 @@ struct Reflector : public Behaviour {
 			gameObject->position.y -= normalizedSpeed;
 
 		NetworkUpdate(gameObject);
+		NetworkUpdate(reflector_barrier);
 
 		// Angle of go depending on mouse position
 		gameObject->angle = atan2(mouse.x, -mouse.y) * 180 / PI;
