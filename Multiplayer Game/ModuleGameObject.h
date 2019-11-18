@@ -4,7 +4,8 @@ enum ObjectType {
 	EMPTY,
 	LASER,
 	SHOOTER,
-	REFLECTOR
+	REFLECTOR,
+	REFLECTOR_BARRIER
 };
 enum ObjectTeam {
 	NO_TEAM,

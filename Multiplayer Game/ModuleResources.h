@@ -15,6 +15,7 @@ public:
 	Texture *spacecraft1 = nullptr;
 	Texture *spacecraft2 = nullptr;
 	Texture *spacecraft3 = nullptr;
+	Texture *reflector = nullptr;
 	Texture *laser = nullptr;
 
 	bool finishedLoading = false;

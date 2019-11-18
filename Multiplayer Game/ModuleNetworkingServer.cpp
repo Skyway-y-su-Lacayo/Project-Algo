@@ -417,7 +417,7 @@ GameObject * ModuleNetworkingServer::spawnPlayerShooter(ClientProxy &clientProxy
 	clientProxy.gameObject->collider->isTrigger = true;
 
 	// Create behaviour
-	clientProxy.gameObject->behaviour = new Spaceship;
+	clientProxy.gameObject->behaviour = new Shooter;
 	clientProxy.gameObject->behaviour->gameObject = clientProxy.gameObject;
 
 	// Assign tag
@@ -461,7 +461,7 @@ GameObject * ModuleNetworkingServer::spawnPlayerReflector(ClientProxy & clientPr
 	clientProxy.gameObject->collider->isTrigger = true;
 
 	// TODO(Lucas): Should be a reflector behaviour with a collider attached
-	clientProxy.gameObject->behaviour = new Spaceship;
+	clientProxy.gameObject->behaviour = new Reflector;
 	clientProxy.gameObject->behaviour->gameObject = clientProxy.gameObject;
 
 	// Assign tag
@@ -482,6 +482,33 @@ GameObject * ModuleNetworkingServer::spawnPlayerReflector(ClientProxy & clientPr
 	}
 	 
 	return clientProxy.gameObject;
+}
+
+GameObject * ModuleNetworkingServer::spawnReflectorBarrier(GameObject* parent) {
+	GameObject* reflector_barrier = Instantiate();
+
+	reflector_barrier->size = { 0,0 };
+	reflector_barrier->angle = 0;
+
+	// Texture 
+	reflector_barrier->texture = App->modResources->reflector;
+
+	// Create collider
+	reflector_barrier->collider = App->modCollision->addCollider(ColliderType::Player, reflector_barrier);
+	reflector_barrier->collider->isTrigger = true;
+
+	// Behaviour (Empty for now, since we just want to test visually)
+	reflector_barrier->behaviour = new Behaviour;
+	reflector_barrier->behaviour->gameObject = reflector_barrier;
+
+	// Tag and team
+	reflector_barrier->tag = ObjectType::REFLECTOR_BARRIER;
+	reflector_barrier->team = parent->team;
+
+	// Register go
+	App->modLinkingContext->registerNetworkGameObject(reflector_barrier);
+
+	return reflector_barrier;
 }
 
 GameObject * ModuleNetworkingServer::spawnBullet(GameObject *parent)
