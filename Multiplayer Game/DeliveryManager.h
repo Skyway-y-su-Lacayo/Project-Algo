@@ -3,6 +3,8 @@ class DeliveryManager;
 
 #define MS_TO_DELIVERY_TIMEOUT 1000
 //TODO: WHAT IS THIS?
+class ReplicationCommand;
+
 class DeliveryDelegate
 {
 public:
@@ -16,15 +18,18 @@ public:
 	void onDeliverySuccess(DeliveryManager* deliveryManager)
 	{}
 	void onDeliveryFailure(DeliveryManager* deliveryManager)
-	{}
+	{
+
+	}
 };
 
 struct Delivery
 {
 	uint32 sequenceNumber = 0;
 	Timer timer;
-	bool to_remove;
-	//DeliveryDelegate* delegate = nullptr;
+	bool to_remove = false;
+	std::vector<ReplicationCommand> actions;
+	DeliveryDelegate* deldxegate = nullptr;
 };
 class DeliveryManager
 {

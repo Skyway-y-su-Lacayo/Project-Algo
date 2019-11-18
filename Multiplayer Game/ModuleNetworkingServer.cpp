@@ -91,6 +91,7 @@ void ModuleNetworkingServer::onGui()
 						ImGui::SameLine();
 						ImGui::Text("%lu", clientProxies[i].deliveryManager.pending_deliveries[t]->sequenceNumber);
 					}
+
 					
 					ImGui::Separator();
 				}
@@ -248,6 +249,13 @@ void ModuleNetworkingServer::onUpdate()
 			}
 		}
 
+		for (int i = 0; i < MAX_CLIENTS; ++i)
+		{
+			if (clientProxies[i].connected)
+			{
+				clientProxies[i].deliveryManager.processTimedOutPackets();
+			}
+		}
 		// Send ping to all clients periodically
 		manageSendPing();
 
@@ -502,8 +510,9 @@ void ModuleNetworkingServer::manageSendReplication() {
 			if (clientProxies[i].connected) {
 				OutputMemoryStream packet;
 				packet << ServerMessage::Replication;
-				clientProxies[i].deliveryManager.writeSequenceNumber(packet);
+				Delivery* delivery = clientProxies[i].deliveryManager.writeSequenceNumber(packet);
 				clientProxies[i].replicationManager.write(packet);
+				delivery->actions = clientProxies[i].replicationManager.actions;
 				sendPacket(packet, clientProxies[i].address);
 			}
 		}

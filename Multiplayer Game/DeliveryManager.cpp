@@ -35,8 +35,11 @@ bool DeliveryManager::processSequenceNumber(const InputMemoryStream & packet)
 	pending_ack.push_back(current_seq);
 
 	
-	if (current_seq <= seq_number)
+	if (current_seq >= seq_number)
+	{
+		seq_number = current_seq;
 		ret = true;
+	}
 	else
 	{
 		ELOG("A packet was discarded because the sequence number was out of order");
@@ -44,7 +47,7 @@ bool DeliveryManager::processSequenceNumber(const InputMemoryStream & packet)
 	}
 
 
-	seq_number++;
+
 	return ret;
 }
 
@@ -91,7 +94,19 @@ void DeliveryManager::processTimedOutPackets()
 		if ((*item)->timer.Read() > MS_TO_DELIVERY_TIMEOUT)
 		{
 			//TODO CALL ON FAILED
-			pending_deliveries.erase(item);
+			(*item)->to_remove = true;
 		}
 	}
+
+	for (auto it = pending_deliveries.begin(); it != pending_deliveries.end(); it++)
+		if ((*it)->to_remove)
+		{
+			pending_deliveries.erase(it);
+			if (pending_deliveries.size() != 0)
+			{
+				it = pending_deliveries.begin();
+			}
+			else
+				return;
+		}
 }
