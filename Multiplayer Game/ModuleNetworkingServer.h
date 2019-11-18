@@ -81,7 +81,9 @@ public:
 	// Spawning network objects
 	//////////////////////////////////////////////////////////////////////
 
-	GameObject * spawnPlayer(ClientProxy &clientProxy, uint8 spaceshipType);
+	GameObject * spawnPlayer(ClientProxy &clientProxy, uint8 type); // ObjectType enum
+	GameObject * spawnPlayerShooter(ClientProxy &clientProxy);
+	GameObject * spawnPlayerShield(ClientProxy &clientProxy);
 
 	GameObject * spawnBullet(GameObject *parent);
 

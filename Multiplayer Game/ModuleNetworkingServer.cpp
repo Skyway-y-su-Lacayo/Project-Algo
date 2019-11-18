@@ -374,22 +374,35 @@ uint32 ModuleNetworkingServer::connectedClients()
 // Spawning
 //////////////////////////////////////////////////////////////////////
 
-GameObject * ModuleNetworkingServer::spawnPlayer(ClientProxy &clientProxy, uint8 spaceshipType)
+
+GameObject * ModuleNetworkingServer::spawnPlayer(ClientProxy & clientProxy, uint8 type) {
+	GameObject* ret = nullptr;
+
+	switch ((ObjectType)type) {
+		case ObjectType::SHOOTER:
+		{
+			ret = spawnPlayerShooter(clientProxy);
+			break;
+		}
+		case ObjectType::REFLECTOR:
+		{
+			ret = spawnPlayerShield(clientProxy);
+			break;
+		}
+	}
+
+	return ret;
+}
+
+GameObject * ModuleNetworkingServer::spawnPlayerShooter(ClientProxy &clientProxy)
 {
 	// Create a new game object with the player properties
 	clientProxy.gameObject = Instantiate();
 	clientProxy.gameObject->size = { 100, 100 };
 	clientProxy.gameObject->angle = 45.0f;
 
-	if (spaceshipType == 0) {
-		clientProxy.gameObject->texture = App->modResources->spacecraft1;
-	}
-	else if (spaceshipType == 1) {
-		clientProxy.gameObject->texture = App->modResources->spacecraft2;
-	}
-	else {
-		clientProxy.gameObject->texture = App->modResources->spacecraft3;
-	}
+	// Shooter texture
+	clientProxy.gameObject->texture = App->modResources->spacecraft1;
 
 	// Create collider
 	clientProxy.gameObject->collider = App->modCollision->addCollider(ColliderType::Player, clientProxy.gameObject);
@@ -400,7 +413,7 @@ GameObject * ModuleNetworkingServer::spawnPlayer(ClientProxy &clientProxy, uint8
 	clientProxy.gameObject->behaviour->gameObject = clientProxy.gameObject;
 
 	// Assign tag
-	clientProxy.gameObject->tag = ObjectType::SPACESHIP;
+	clientProxy.gameObject->tag = ObjectType::SHOOTER;
 
 	//Assign Team
 	if (connectedClients() % 2 == 0)
@@ -423,6 +436,10 @@ GameObject * ModuleNetworkingServer::spawnPlayer(ClientProxy &clientProxy, uint8
 	}
 
 	return clientProxy.gameObject;
+}
+
+GameObject * ModuleNetworkingServer::spawnPlayerShield(ClientProxy & clientProxy) {
+	return nullptr;
 }
 
 GameObject * ModuleNetworkingServer::spawnBullet(GameObject *parent)
