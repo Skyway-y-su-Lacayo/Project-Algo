@@ -79,8 +79,8 @@ enum class ColliderType
 {
 	None,
 	Player,
-	Laser,
-	Shield
+	SoftLaser,
+	HardLaser
 };
 
 

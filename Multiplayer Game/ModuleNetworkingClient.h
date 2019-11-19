@@ -18,7 +18,7 @@ public:
 
 	void spawnPlayer(uint32 networkID, uint8 type);
 	void spawnReflector(uint32 networkID);
-	void spawnBullet(uint32 networkID);
+	void spawnBullet(uint32 networkID, uint8 type);
 
 
 private:

@@ -518,22 +518,35 @@ GameObject * ModuleNetworkingServer::spawnReflectorBarrier(GameObject* parent) {
 	return reflector_barrier;
 }
 
-GameObject * ModuleNetworkingServer::spawnBullet(GameObject *parent)
+GameObject * ModuleNetworkingServer::spawnBullet(GameObject *parent, ColliderType col_type)
 {
 	// Create a new game object with the player properties
 	GameObject *gameObject = Instantiate();
 	gameObject->size = { 20, 60 };
 	gameObject->angle = parent->angle;
 	gameObject->position = parent->position;
-	gameObject->texture = App->modResources->laser;
-	gameObject->collider = App->modCollision->addCollider(ColliderType::Laser, gameObject);
+
+	// Tag and texture
+	switch (col_type) {
+		case ColliderType::SoftLaser: {
+			gameObject->texture = App->modResources->laser;
+			gameObject->tag = ObjectType::SOFT_LASER;
+			break;
+		}
+		case ColliderType::HardLaser: {
+			gameObject->texture = App->modResources->asteroid1;
+			gameObject->tag = ObjectType::HARD_LASER;
+		}
+									 
+	}
+
+	gameObject->collider = App->modCollision->addCollider(col_type, gameObject);
 
 	// Create behaviour
 	gameObject->behaviour = new Laser;
 	gameObject->behaviour->gameObject = gameObject;
 
-	// Assign tag
-	gameObject->tag = ObjectType::LASER;
+
 
 	gameObject->team = parent->team;
 	// Assign a new network identity to the object

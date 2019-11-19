@@ -66,9 +66,10 @@ void ReplicationManagerClient::spawnClientObject(int tag, uint32 networkID) {
 			App->modNetClient->spawnReflector(networkID);
 			break;
 		}
-		case ObjectType::LASER: 
+		case ObjectType::SOFT_LASER: 
+		case ObjectType::HARD_LASER:
 		{
-			App->modNetClient->spawnBullet(networkID);
+			App->modNetClient->spawnBullet(networkID, tag);
 
 			break;
 		}

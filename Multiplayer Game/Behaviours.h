@@ -52,13 +52,13 @@ struct Shooter : public Behaviour
 		gameObject->angle = atan2(mouse.x, -mouse.y) * 180/PI;
 
 		if (mouse.buttons[0] == ButtonState::Press)
-			App->modNetServer->spawnBullet(gameObject);
+			App->modNetServer->spawnBullet(gameObject, ColliderType::SoftLaser);
 	}
 
 	void onCollisionTriggered(Collider &c1, Collider &c2) override
 	{
 
-		if (c2.type == ColliderType::Laser && c2.gameObject->team != gameObject->team)
+		if (c2.type == ColliderType::SoftLaser && c2.gameObject->team != gameObject->team)
 		{
 			NetworkDestroy(c2.gameObject); // Destroy the laser
 			lives -= 1;
@@ -128,7 +128,7 @@ struct Reflector : public Behaviour {
 
 	void onCollisionTriggered(Collider &c1, Collider &c2) override {
 
-		if (c2.type == ColliderType::Laser && c2.gameObject->team != gameObject->team) {
+		if (c2.type == ColliderType::SoftLaser && c2.gameObject->team != gameObject->team) {
 			NetworkDestroy(c2.gameObject); // Destroy the laser
 			lives -= 1;
 			if (lives <= 0) {
@@ -155,14 +155,12 @@ struct ReflectorBarrier : public Behaviour {
 	void update() override {
 		if (create_bullet) {
 			create_bullet = false;
-			GameObject* Bullet = App->modNetServer->spawnBullet(gameObject);
+			GameObject* Bullet = App->modNetServer->spawnBullet(gameObject, ColliderType::HardLaser);
 			// TODO(Lucas): It should be "bouncing collider" but for now I just want to see if this works
-			App->modCollision->removeCollider(Bullet->collider);
-			LOG("BALA REBOTA: networkID = %i", Bullet->networkId);
 		}
 	}
 	void onCollisionTriggered(Collider &c1, Collider &c2) override {
-		if (c2.type == ColliderType::Laser) {
+		if (c2.type == ColliderType::SoftLaser) {
 			NetworkDestroy(c2.gameObject); // Destroy the laser
 
 			create_bullet = true; // Can't create colliders in the middle of an iteration
