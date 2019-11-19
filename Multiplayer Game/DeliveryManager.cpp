@@ -25,6 +25,17 @@ Delivery * DeliveryManager::writeSequenceNumber(OutputMemoryStream & packet)
 	return ret;
 }
 
+Delivery * DeliveryManager::writeSequenceNumberForcedNumber(OutputMemoryStream & packet, uint32 number)
+{
+	Delivery* ret = new Delivery;
+	packet << number;
+	ret->sequenceNumber = number;
+	ret->timer.Start();
+	pending_deliveries.push_back(ret);
+
+	return ret;
+}
+
 bool DeliveryManager::processSequenceNumber(const InputMemoryStream & packet)
 {
 	//TODO check what out of order means
@@ -68,8 +79,9 @@ void DeliveryManager::processAckdSequenceNumbers(const InputMemoryStream & packe
 			if ((*item)->sequenceNumber == (*seq_ack))
 			{
 				//CALL ON SUCCESS;
-				(*item)->delegate->onDeliverySuccess(this);
 				(*item)->to_remove = true;
+				(*item)->delegate->onDeliverySuccess(this);
+
 			}
 		}
 	}
@@ -90,13 +102,14 @@ void DeliveryManager::processAckdSequenceNumbers(const InputMemoryStream & packe
 
 void DeliveryManager::processTimedOutPackets()
 {
-	for (auto item = pending_deliveries.begin(); item != pending_deliveries.end(); item++)
+	for (int i = 0;i<pending_deliveries.size();i++)
 	{
-		if ((*item)->timer.Read() > MS_TO_DELIVERY_TIMEOUT)
+		if (pending_deliveries[i]->timer.Read() > MS_TO_DELIVERY_TIMEOUT)
 		{
 			//TODO CALL ON FAILED
-			(*item)->delegate->onDeliveryFailure(this);
-			(*item)->to_remove = true;
+			pending_deliveries[i]->delegate->onDeliveryFailure(this);
+
+			pending_deliveries[i]->to_remove = true;
 		}
 	}
 
@@ -113,15 +126,26 @@ void DeliveryManager::processTimedOutPackets()
 		}
 }
 
+ReplicationDelegate::ReplicationDelegate(ModuleNetworkingServer* networkingServer, std::vector<ReplicationCommand> actions) : networkingServer(networkingServer), actions(actions)
+{}
+
 void ReplicationDelegate::onDeliveryFailure(DeliveryManager * deliveryManager)
 {
-	ELOG("WARNING: Calling OnDeliveryFailure");
+	OutputMemoryStream packet;
+	packet << ServerMessage::Replication;
+	Delivery* delivery = deliveryManager->writeSequenceNumber(packet);
+
 	for (int i = 0; i < MAX_CLIENTS; ++i) {
-		if (networking_server->clientProxies[i].connected) {
+		if (networkingServer->clientProxies[i].connected) {
 			OutputMemoryStream packet;
-			packet << ServerMessage::RepeatReplication;
-			networking_server->clientProxies[i].replicationManager.write(packet);
-			networking_server->sendPacket(packet, networking_server->clientProxies[i].address);
+			packet << ServerMessage::Replication;
+			Delivery* delivery = networkingServer->clientProxies[i].deliveryManager.writeSequenceNumber(packet);
+			//TODO find a better way to do this
+			delivery->delegate = new ReplicationDelegate(networkingServer,actions);
+
+			networkingServer->clientProxies[i].replicationManager.write(packet, delivery);
+
+			networkingServer->sendPacket(packet, networkingServer->clientProxies[i].address);
 		}
 	}
 }

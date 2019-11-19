@@ -597,12 +597,10 @@ void ModuleNetworkingServer::manageSendReplication() {
 				packet << ServerMessage::Replication;
 				Delivery* delivery = clientProxies[i].deliveryManager.writeSequenceNumber(packet);
 				//TODO find a better way to do this
-				delivery->delegate = new ReplicationDelegate();
-				ReplicationDelegate* tmp = (ReplicationDelegate*)delivery->delegate;
-				tmp->networking_server = this;
+				delivery->delegate = new ReplicationDelegate(this, clientProxies[i].replicationManager.actions);
 
-				clientProxies[i].replicationManager.write(packet);
-				delivery->actions = clientProxies[i].replicationManager.actions;
+				clientProxies[i].replicationManager.write(packet,delivery);
+
 				sendPacket(packet, clientProxies[i].address);
 			}
 		}

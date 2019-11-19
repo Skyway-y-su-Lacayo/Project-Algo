@@ -15,10 +15,16 @@ void ReplicationManagerServer::update(uint32 networkID) {
 
 }
 
-void ReplicationManagerServer::write(OutputMemoryStream & packet) {
+void ReplicationManagerServer::write(OutputMemoryStream & packet, Delivery* delivery, std::vector<ReplicationCommand> _actions) {
 	// Iterate actions and serialize object fields when needed.
-
+	if (ReplicationDelegate* tmp = (ReplicationDelegate*)delivery->delegate)
+	{
+		tmp->actions = actions;
+	}
 	
+	if (_actions.size() != 0)
+		actions = _actions;
+
 	for (auto action : actions) {
 		// Action and network id commun to all
 
