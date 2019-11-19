@@ -107,9 +107,9 @@ void DeliveryManager::processTimedOutPackets()
 		if (pending_deliveries[i]->timer.Read() > MS_TO_DELIVERY_TIMEOUT)
 		{
 			//TODO CALL ON FAILED
-			pending_deliveries[i]->delegate->onDeliveryFailure(this);
+			//pending_deliveries[i]->delegate->onDeliveryFailure(this);
 
-			pending_deliveries[i]->to_remove = true;
+			//pending_deliveries[i]->to_remove = true;
 		}
 	}
 
