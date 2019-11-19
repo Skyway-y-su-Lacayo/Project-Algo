@@ -460,7 +460,6 @@ GameObject * ModuleNetworkingServer::spawnPlayerReflector(ClientProxy & clientPr
 	clientProxy.gameObject->collider = App->modCollision->addCollider(ColliderType::Player, clientProxy.gameObject);
 	clientProxy.gameObject->collider->isTrigger = true;
 
-	// TODO(Lucas): Should be a reflector behaviour with a collider attached
 	clientProxy.gameObject->behaviour = new Reflector;
 	clientProxy.gameObject->behaviour->gameObject = clientProxy.gameObject;
 

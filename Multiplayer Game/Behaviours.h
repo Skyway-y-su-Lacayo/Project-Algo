@@ -156,7 +156,6 @@ struct ReflectorBarrier : public Behaviour {
 		if (create_bullet) {
 			create_bullet = false;
 			GameObject* Bullet = App->modNetServer->spawnBullet(gameObject, ColliderType::HardLaser);
-			// TODO(Lucas): It should be "bouncing collider" but for now I just want to see if this works
 		}
 	}
 	void onCollisionTriggered(Collider &c1, Collider &c2) override {

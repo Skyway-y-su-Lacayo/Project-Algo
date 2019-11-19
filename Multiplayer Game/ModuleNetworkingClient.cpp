@@ -284,7 +284,7 @@ void ModuleNetworkingClient::managePing(sockaddr_in otherAddress) {
 
 }
 
-void ModuleNetworkingClient::spawnPlayer(uint32 networkID, uint8 tag) {
+GameObject* ModuleNetworkingClient::spawnPlayer(uint32 networkID, uint8 tag) {
 
 	GameObject* gameObject = Instantiate();
 	gameObject->size = { 100, 100 };
@@ -311,9 +311,11 @@ void ModuleNetworkingClient::spawnPlayer(uint32 networkID, uint8 tag) {
 
 	// Assign a new network identity to the object
 	App->modLinkingContext->registerNetworkGameObjectWithNetworkId(gameObject, networkID);
+
+	return gameObject;
 }
 
-void ModuleNetworkingClient::spawnReflector(uint32 networkID) {
+GameObject* ModuleNetworkingClient::spawnReflector(uint32 networkID) {
 
 	GameObject* gameObject = Instantiate();
 	gameObject->size = { 100, 50 };
@@ -331,9 +333,11 @@ void ModuleNetworkingClient::spawnReflector(uint32 networkID) {
 	// Assign a new network identity to the object
 	App->modLinkingContext->registerNetworkGameObjectWithNetworkId(gameObject, networkID);
 
+	return gameObject;
+
 }
 
-void ModuleNetworkingClient::spawnBullet(uint32 networkID, uint8 tag) {
+GameObject* ModuleNetworkingClient::spawnBullet(uint32 networkID, uint8 tag) {
 
 	GameObject* gameObject = Instantiate();
 	gameObject->size = { 20, 60 };
@@ -349,15 +353,13 @@ void ModuleNetworkingClient::spawnBullet(uint32 networkID, uint8 tag) {
 			break;
 		}
 	}
-
-
-
 	// Create behaviour
-
-
+	
 	// Assign tag
 	gameObject->tag = tag;
 
 	// Assign a new network identity to the object
 	App->modLinkingContext->registerNetworkGameObjectWithNetworkId(gameObject, networkID);
+
+	return gameObject;
 }

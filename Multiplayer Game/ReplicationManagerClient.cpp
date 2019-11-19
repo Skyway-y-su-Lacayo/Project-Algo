@@ -8,6 +8,7 @@ void ReplicationManagerClient::read(const InputMemoryStream & packet) {
 	while (packet.RemainingByteCount() > 0) {
 		ReplicationAction action = ReplicationAction::NONE;
 		uint32 networkID = 0;
+
 		packet >> action ;
 		packet >> networkID;
 
@@ -17,21 +18,15 @@ void ReplicationManagerClient::read(const InputMemoryStream & packet) {
 				// Introduce tag to know which object to create
 				uint32 tag = ObjectType::EMPTY;
 				packet >> tag;
-				spawnClientObject(tag, networkID);
+				GameObject* created = spawnClientObject(tag, networkID);
+				readPos(packet, created);
 				break;
 			}
 			case ReplicationAction::UPDATE:
 			{
-				// Lucas(TODO): Make functions for easier serialization
-				float x = 0; float y = 0; float angle = 0;
-				packet >> x; packet >> y;
-				packet >> angle;
-				
+				// This will crash if the object is a nullptr
 				if (GameObject* object = App->modLinkingContext->getNetworkGameObject(networkID))
-				{
-					object->position.x = x; object->position.y = y;
-					object->angle = angle;
-				}
+					readPos(packet, object);
 				else
 					ELOG("Gameobject assigned to NetworkID %i doesn not exist, can't update", networkID); 
 
@@ -52,28 +47,38 @@ void ReplicationManagerClient::read(const InputMemoryStream & packet) {
 	}
 }
 
-void ReplicationManagerClient::spawnClientObject(int tag, uint32 networkID) {
+GameObject* ReplicationManagerClient::spawnClientObject(int tag, uint32 networkID) {
+
+	GameObject* ret = nullptr;
+
 	switch (tag) {
 		case ObjectType::SHOOTER:
 		case ObjectType::REFLECTOR: 
 		{
 			// Spawn shooter/reflector
-			App->modNetClient->spawnPlayer(networkID, tag);
+			ret = App->modNetClient->spawnPlayer(networkID, tag);
 			break;
 		}
 		case ObjectType::REFLECTOR_BARRIER: 
 		{
-			App->modNetClient->spawnReflector(networkID);
+			ret = App->modNetClient->spawnReflector(networkID);
 			break;
 		}
 		case ObjectType::SOFT_LASER: 
 		case ObjectType::HARD_LASER:
 		{
-			App->modNetClient->spawnBullet(networkID, tag);
+			ret = App->modNetClient->spawnBullet(networkID, tag);
 
 			break;
 		}
 	}
+
+	return ret;
+}
+
+void ReplicationManagerClient::readPos(const InputMemoryStream & packet, GameObject * object) {
+	packet >> object->position.x; packet >> object->position.y;
+	packet >> object->angle;
 }
 
 

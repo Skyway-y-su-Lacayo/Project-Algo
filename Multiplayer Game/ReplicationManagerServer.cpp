@@ -29,7 +29,7 @@ void ReplicationManagerServer::write(OutputMemoryStream & packet, Delivery* deli
 		// Action and network id commun to all
 
 		if (action.action == ReplicationAction::UPDATE && !App->modLinkingContext->getNetworkGameObject(action.networkID))
-			continue; // Don't update if the object doesn't exist
+			continue; // Don't update if the object doesn't exist anymore
 
 		packet << action.action;
 		packet << action.networkID;
@@ -39,18 +39,15 @@ void ReplicationManagerServer::write(OutputMemoryStream & packet, Delivery* deli
 				// Introduce tag to know which object to create
 				
 				GameObject* object = App->modLinkingContext->getNetworkGameObject(action.networkID);
+
 				packet << object->tag;
+				writePos(packet, object);
 				break;
 			}
 			case ReplicationAction::UPDATE:
 			{
 				GameObject* object = App->modLinkingContext->getNetworkGameObject(action.networkID);
-
-				// In case an object has been destroyed during the replication interval
-
-				packet << object->position.x; packet << object->position.y;
-				packet << object->angle;
-
+				writePos(packet, object);
 				break;
 			}
 			case ReplicationAction::DESTROY:
@@ -64,4 +61,9 @@ void ReplicationManagerServer::write(OutputMemoryStream & packet, Delivery* deli
 	actions.clear();
 
 
+}
+
+void ReplicationManagerServer::writePos(OutputMemoryStream & packet, GameObject * object) {
+	packet << object->position.x; packet << object->position.y;
+	packet << object->angle;
 }

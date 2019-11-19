@@ -16,9 +16,9 @@ public:
 
 
 
-	void spawnPlayer(uint32 networkID, uint8 type);
-	void spawnReflector(uint32 networkID);
-	void spawnBullet(uint32 networkID, uint8 type);
+	GameObject* spawnPlayer(uint32 networkID, uint8 type);
+	GameObject* spawnReflector(uint32 networkID);
+	GameObject* spawnBullet(uint32 networkID, uint8 type);
 
 
 private:
