@@ -47,6 +47,7 @@ void ScreenMainMenu::gui()
 	static char playerNameStr[64] = "";
 	ImGui::InputText("Player name", playerNameStr, sizeof(playerNameStr));
 
+	// Role selection combo
 	const char* spaceshipTypes[] = { "Shooter", "Reflector"};
 	static const char* spaceshipTypeStr = spaceshipTypes[0];
 	static uint8 spaceshipType = 2;
@@ -58,14 +59,26 @@ void ScreenMainMenu::gui()
 			if (ImGui::Selectable(spaceshipTypes[i], is_selected))
 			{
 				spaceshipTypeStr = spaceshipTypes[i];
-				spaceshipType = i + 2; // Match the enum "ObjectType"
+				switch (i) {
+					case 0: {
+						spaceshipType = ObjectType::SHOOTER;
+						break;
+					}
+					case 1: {
+						spaceshipType = ObjectType::REFLECTOR;
+						break;
+					}
+				}
 			}
 			if (is_selected)
 				ImGui::SetItemDefaultFocus();   // You may set the initial focus when opening the combo (scrolling + for keyboard navigation support)
 		}
 		ImGui::EndCombo();
 	}
+	
+	// Add team selection combo
 
+	static uint8 team;
 	static bool showInvalidUserName = false;
 
 	if (ImGui::Button("Connect to server"))
@@ -78,6 +91,7 @@ void ScreenMainMenu::gui()
 			App->modScreen->screenGame->serverAddress = serverAddressStr;
 			App->modScreen->screenGame->playerName = playerNameStr;
 			App->modScreen->screenGame->spaceshipType = spaceshipType;
+			App->modScreen->screenGame->team = team;
 			App->modScreen->swapScreensWithTransition(this, App->modScreen->screenGame);
 		}
 		else

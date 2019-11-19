@@ -9,6 +9,7 @@ public:
 	const char *serverAddress = "127.0.0.1";
 	const char *playerName = "player";
 	uint8 spaceshipType = 0;
+	uint8 team = ObjectTeam::TEAM_1;
 
 private:
 
