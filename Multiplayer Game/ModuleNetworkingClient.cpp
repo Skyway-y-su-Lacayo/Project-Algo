@@ -333,20 +333,30 @@ void ModuleNetworkingClient::spawnReflector(uint32 networkID) {
 
 }
 
-void ModuleNetworkingClient::spawnBullet(uint32 networkID) {
+void ModuleNetworkingClient::spawnBullet(uint32 networkID, uint8 tag) {
 
 	GameObject* gameObject = Instantiate();
 	gameObject->size = { 20, 60 };
 	gameObject->angle = 45.0f;
 
-	gameObject->texture = App->modResources->laser;
+	switch (tag) {
+		case ObjectType::SOFT_LASER: {
+			gameObject->texture = App->modResources->laser;
+			break;
+		}
+		case ObjectType::HARD_LASER: {
+			gameObject->texture = App->modResources->asteroid1;
+			break;
+		}
+	}
+
 
 
 	// Create behaviour
 
 
 	// Assign tag
-	gameObject->tag = ObjectType::LASER;
+	gameObject->tag = tag;
 
 	// Assign a new network identity to the object
 	App->modLinkingContext->registerNetworkGameObjectWithNetworkId(gameObject, networkID);

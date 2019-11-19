@@ -88,7 +88,7 @@ public:
 	GameObject * spawnPlayerReflector(ClientProxy &clientProxy);
 
 	GameObject * spawnReflectorBarrier(GameObject* parent);
-	GameObject * spawnBullet(GameObject *parent);
+	GameObject * spawnBullet(GameObject *parent, ColliderType col_type);
 
 	// NOTE(jesus): Here go spawn methods for each type of network objects
 
