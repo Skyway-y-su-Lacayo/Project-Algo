@@ -83,12 +83,14 @@ public:
 	// Spawning network objects
 	//////////////////////////////////////////////////////////////////////
 
-	GameObject * spawnPlayer(ClientProxy &clientProxy, uint8 type); // ObjectType enum
-	GameObject * spawnPlayerShooter(ClientProxy &clientProxy);
-	GameObject * spawnPlayerReflector(ClientProxy &clientProxy);
+	GameObject * spawnPlayer(ClientProxy &clientProxy, uint8 type, uint8 team); // ObjectType enum
+	GameObject * spawnPlayerShooter(ClientProxy &clientProxy, uint8 team);
+	GameObject * spawnPlayerReflector(ClientProxy &clientProxy, uint8 team);
 
 	GameObject * spawnReflectorBarrier(GameObject* parent);
 	GameObject * spawnBullet(GameObject *parent, ColliderType col_type);
+
+	bool checkSpaceshipAndTeam(uint8 type, uint8 team);
 
 	// NOTE(jesus): Here go spawn methods for each type of network objects
 

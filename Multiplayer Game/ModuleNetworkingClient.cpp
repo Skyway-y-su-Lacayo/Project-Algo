@@ -14,10 +14,11 @@ void ModuleNetworkingClient::setServerAddress(const char * pServerAddress, uint1
 	serverPort = pServerPort;
 }
 
-void ModuleNetworkingClient::setPlayerInfo(const char * pPlayerName, uint8 pSpaceshipType)
+void ModuleNetworkingClient::setPlayerInfo(const char * pPlayerName, uint8 pSpaceshipType, uint8 pTeam)
 {
 	playerName = pPlayerName;
 	spaceshipType = pSpaceshipType;
+	team = pTeam;
 }
 
 
@@ -172,6 +173,7 @@ void ModuleNetworkingClient::onUpdate()
 		stream << ClientMessage::Hello;
 		stream << playerName;
 		stream << spaceshipType;
+		stream << team;
 
 		sendPacket(stream, serverAddress);
 

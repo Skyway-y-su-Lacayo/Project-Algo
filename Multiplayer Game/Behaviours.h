@@ -58,7 +58,7 @@ struct Shooter : public Behaviour
 	void onCollisionTriggered(Collider &c1, Collider &c2) override
 	{
 
-		if (c2.type == ColliderType::SoftLaser && c2.gameObject->team != gameObject->team)
+		if (c2.type == ColliderType::HardLaser && c2.gameObject->team != gameObject->team)
 		{
 			NetworkDestroy(c2.gameObject); // Destroy the laser
 			lives -= 1;
@@ -128,7 +128,7 @@ struct Reflector : public Behaviour {
 
 	void onCollisionTriggered(Collider &c1, Collider &c2) override {
 
-		if (c2.type == ColliderType::SoftLaser && c2.gameObject->team != gameObject->team) {
+		if (c2.type == ColliderType::HardLaser && c2.gameObject->team != gameObject->team) {
 			NetworkDestroy(c2.gameObject); // Destroy the laser
 			lives -= 1;
 			if (lives <= 0) {

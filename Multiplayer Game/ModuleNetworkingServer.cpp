@@ -115,59 +115,66 @@ void ModuleNetworkingServer::onPacketReceived(const InputMemoryStream &packet, c
 
 		// Process the packet depending on its type
 		if (message == ClientMessage::Hello) {
-			bool newClient = false;
 
 			if (proxy == nullptr) {
-				proxy = createClientProxy();
-
-				newClient = true;
 
 				std::string playerName;
 				uint8 spaceshipType;
+				uint8 team;
 				packet >> playerName;
 				packet >> spaceshipType;
+				packet >> team;
 
-				proxy->address.sin_family = fromAddress.sin_family;
-				proxy->address.sin_addr.S_un.S_addr = fromAddress.sin_addr.S_un.S_addr;
-				proxy->address.sin_port = fromAddress.sin_port;
-				proxy->connected = true;
-				proxy->name = playerName;
-				proxy->clientId = nextClientId++;
+				// Check if the combination of spaceshipType and team is possible
+				if (!checkSpaceshipAndTeam(spaceshipType, team)) {
+					OutputMemoryStream unwelcomePacket;
+					unwelcomePacket << ServerMessage::Unwelcome;
+					sendPacket(unwelcomePacket, fromAddress);
 
-				// Start "receive Ping timer"
-				proxy->receivePingTimer.Start();
+					WLOG("Message received: UNWELCOMED hello - from player %s", playerName.c_str());
+				}else{
+					proxy = createClientProxy();
 
-				// Create new network object
-				spawnPlayer(*proxy, spaceshipType);
+					proxy->address.sin_family = fromAddress.sin_family;
+					proxy->address.sin_addr.S_un.S_addr = fromAddress.sin_addr.S_un.S_addr;
+					proxy->address.sin_port = fromAddress.sin_port;
+					proxy->connected = true;
+					proxy->name = playerName;
+					proxy->clientId = nextClientId++;
 
-				// Send welcome to the new player
-				OutputMemoryStream welcomePacket;
-				welcomePacket << ServerMessage::Welcome;
-				welcomePacket << proxy->clientId;
-				welcomePacket << proxy->gameObject->networkId;
-				sendPacket(welcomePacket, fromAddress);
+					// Start "receive Ping timer"
+					proxy->receivePingTimer.Start();
+
+					// Create new network object
+					spawnPlayer(*proxy, spaceshipType, team);
+
+					// Send welcome to the new player
+					OutputMemoryStream welcomePacket;
+					welcomePacket << ServerMessage::Welcome;
+					welcomePacket << proxy->clientId;
+					welcomePacket << proxy->gameObject->networkId;
+					sendPacket(welcomePacket, fromAddress);
 
 			
 
-				uint16 networkGameObjectsCount;
-				GameObject *networkGameObjects[MAX_NETWORK_OBJECTS];
-				App->modLinkingContext->getNetworkGameObjects(networkGameObjects, &networkGameObjectsCount);
-				for (uint16 i = 0; i < networkGameObjectsCount; ++i) {
-					GameObject *gameObject = networkGameObjects[i];
-					if (gameObject->networkId != proxy->gameObject->networkId)
-					{
-						// TODO(jesus): Notify this proxy's replication manager about the creation of this game object
-						proxy->replicationManager.create(gameObject->networkId);
-						proxy->replicationManager.update(gameObject->networkId);
+					uint16 networkGameObjectsCount;
+					GameObject *networkGameObjects[MAX_NETWORK_OBJECTS];
+					App->modLinkingContext->getNetworkGameObjects(networkGameObjects, &networkGameObjectsCount);
+					for (uint16 i = 0; i < networkGameObjectsCount; ++i) {
+						GameObject *gameObject = networkGameObjects[i];
+						if (gameObject->networkId != proxy->gameObject->networkId)
+						{
+							// TODO(jesus): Notify this proxy's replication manager about the creation of this game object
+							proxy->replicationManager.create(gameObject->networkId);
+							proxy->replicationManager.update(gameObject->networkId);
+						}
+						// TODO(jesus): Notify the new client proxy's replication manager about the creation of this game object
 					}
-					// TODO(jesus): Notify the new client proxy's replication manager about the creation of this game object
+
+					LOG("Message received: hello - from player %s", playerName.c_str());
 				}
-
-				LOG("Message received: hello - from player %s", playerName.c_str());
 			}
-
-			if (!newClient) {
-				// Send welcome to the new player
+			else {
 				OutputMemoryStream unwelcomePacket;
 				unwelcomePacket << ServerMessage::Unwelcome;
 				sendPacket(unwelcomePacket, fromAddress);
@@ -383,18 +390,18 @@ uint32 ModuleNetworkingServer::connectedClients()
 //////////////////////////////////////////////////////////////////////
 
 
-GameObject * ModuleNetworkingServer::spawnPlayer(ClientProxy & clientProxy, uint8 type) {
+GameObject * ModuleNetworkingServer::spawnPlayer(ClientProxy & clientProxy, uint8 type, uint8 team) {
 	GameObject* ret = nullptr;
 
 	switch ((ObjectType)type) {
 		case ObjectType::SHOOTER:
 		{
-			ret = spawnPlayerShooter(clientProxy);
+			ret = spawnPlayerShooter(clientProxy, team);
 			break;
 		}
 		case ObjectType::REFLECTOR:
 		{
-			ret = spawnPlayerReflector(clientProxy);
+			ret = spawnPlayerReflector(clientProxy, team);
 			break;
 		}
 	}
@@ -402,7 +409,7 @@ GameObject * ModuleNetworkingServer::spawnPlayer(ClientProxy & clientProxy, uint
 	return ret;
 }
 
-GameObject * ModuleNetworkingServer::spawnPlayerShooter(ClientProxy &clientProxy)
+GameObject * ModuleNetworkingServer::spawnPlayerShooter(ClientProxy &clientProxy, uint8 team)
 {
 	// Create a new game object with the player properties
 	clientProxy.gameObject = Instantiate();
@@ -424,11 +431,7 @@ GameObject * ModuleNetworkingServer::spawnPlayerShooter(ClientProxy &clientProxy
 	clientProxy.gameObject->tag = ObjectType::SHOOTER;
 
 	//Assign Team
-	if (connectedClients() % 2 == 0)
-		clientProxy.gameObject->team = ObjectTeam::TEAM_2;
-	else
-		clientProxy.gameObject->team = ObjectTeam::TEAM_1;
-
+	clientProxy.gameObject->team = team;
 
 	// Assign a new network identity to the object
 	App->modLinkingContext->registerNetworkGameObject(clientProxy.gameObject);
@@ -446,7 +449,7 @@ GameObject * ModuleNetworkingServer::spawnPlayerShooter(ClientProxy &clientProxy
 	return clientProxy.gameObject;
 }
 
-GameObject * ModuleNetworkingServer::spawnPlayerReflector(ClientProxy & clientProxy) {
+GameObject * ModuleNetworkingServer::spawnPlayerReflector(ClientProxy & clientProxy, uint8 team) {
 
 	// Create a new game object with the player properties
 	clientProxy.gameObject = Instantiate();
@@ -467,7 +470,7 @@ GameObject * ModuleNetworkingServer::spawnPlayerReflector(ClientProxy & clientPr
 	clientProxy.gameObject->tag = ObjectType::REFLECTOR;
 
 	// Assign team (Hardcoded to team 1 for testing purposes
-	clientProxy.gameObject->team = ObjectTeam::TEAM_1;
+	clientProxy.gameObject->team = team;
 
 	// Assign a new network identity to the object
 	App->modLinkingContext->registerNetworkGameObject(clientProxy.gameObject);
@@ -562,6 +565,55 @@ GameObject * ModuleNetworkingServer::spawnBullet(GameObject *parent, ColliderTyp
 	}
 
 	return gameObject;
+}
+
+bool ModuleNetworkingServer::checkSpaceshipAndTeam(uint8 type, uint8 team) {
+
+	bool ret = false;
+
+	int team1Members = 0;
+	int team2Members = 0;
+	bool team1Shooter = false;
+	bool team2Shooter = false;
+
+
+	for (int i = 0; i < MAX_CLIENTS; ++i) {
+		if (clientProxies[i].connected) {
+			if (clientProxies[i].gameObject->team == ObjectTeam::TEAM_1) {
+				team1Members++;
+				if (clientProxies[i].gameObject->tag == ObjectType::SHOOTER)
+					team1Shooter = true;
+			}
+			else if(clientProxies[i].gameObject->team == ObjectTeam::TEAM_2){
+				team2Members++;
+				if(clientProxies[i].gameObject->tag == ObjectType::SHOOTER)  // Team 2
+					team2Shooter = true;
+			}
+		}
+	}
+
+
+	if (team == ObjectTeam::TEAM_1 && team1Members < 2) {
+
+		if (team1Members == 0)
+			ret = true;
+		else if (!team1Shooter && type == ObjectType::SHOOTER) // There is 1 reflector and player wants to be a shooter
+			ret = true;
+		else if (team1Shooter && type == ObjectType::REFLECTOR) // There is 1 shooter and player wants to be a reflector
+			ret = true;
+
+	}
+	else if(team == ObjectTeam::TEAM_2 && team2Members < 2) { // Team 2
+		if (team2Members == 0)
+			ret = true;
+		else if (!team2Shooter && type == ObjectType::SHOOTER) // There is 1 reflector and player wants to be a shooter
+			ret = true;
+		else if (team2Shooter && type == ObjectType::REFLECTOR) // There is 1 shooter and player wants to be a reflector
+			ret = true;
+	}
+
+
+	return ret;
 }
 
 
