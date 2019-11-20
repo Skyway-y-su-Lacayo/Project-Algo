@@ -76,6 +76,9 @@ public:
 
 
 	GameObject gameObjects[MAX_GAME_OBJECTS] = {};
+	float gameScale = 0.5;
+
+	GameObject* spawnBackground(vec2 position, vec2 size);
 };
 
 

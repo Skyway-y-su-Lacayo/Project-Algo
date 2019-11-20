@@ -54,6 +54,16 @@ void ModuleNetworkingClient::onStart()
 
 	secondsSinceLastInputDelivery = 0.0f;
 	lastPacketReceivedTime = Time.time;
+
+	// Instantiate boundaries
+	// Top
+	App->modGameObject->spawnBackground({ 0,550 }, { 1200, 100 });
+	// Bottom
+	App->modGameObject->spawnBackground({ 0,-550 }, { 1200, 100 });
+	// Right
+	App->modGameObject->spawnBackground({ 550,0 }, { 100, 1000 });
+	// Left
+	App->modGameObject->spawnBackground({ -550,0 }, { 100, 1000 });
 }
 
 void ModuleNetworkingClient::onGui()
@@ -304,9 +314,8 @@ GameObject* ModuleNetworkingClient::spawnPlayer(uint32 networkID, uint8 tag) {
 		}
 	}
 
-	// No collider needed
-
-	// No behaviour needed
+	// Scale
+	gameObject->size *= App->modGameObject->gameScale;
 
 	// Assign tag
 	gameObject->tag = tag;
@@ -321,6 +330,8 @@ GameObject* ModuleNetworkingClient::spawnReflector(uint32 networkID) {
 
 	GameObject* gameObject = Instantiate();
 	gameObject->size = { 100, 50 };
+	// Scale
+	gameObject->size *= App->modGameObject->gameScale;
 	gameObject->angle = 45.0f;
 
 
@@ -342,20 +353,23 @@ GameObject* ModuleNetworkingClient::spawnReflector(uint32 networkID) {
 GameObject* ModuleNetworkingClient::spawnBullet(uint32 networkID, uint8 tag) {
 
 	GameObject* gameObject = Instantiate();
-	gameObject->size = { 20, 60 };
+
 	gameObject->angle = 45.0f;
 
 	switch (tag) {
 		case ObjectType::SOFT_LASER: {
 			gameObject->texture = App->modResources->laser;
+			gameObject->size = { 20, 60 };
 			break;
 		}
 		case ObjectType::HARD_LASER: {
 			gameObject->texture = App->modResources->asteroid1;
+			gameObject->size = { 60, 60 };
 			break;
 		}
 	}
-	// Create behaviour
+	// Scale
+	gameObject->size *= App->modGameObject->gameScale;
 	
 	// Assign tag
 	gameObject->tag = tag;

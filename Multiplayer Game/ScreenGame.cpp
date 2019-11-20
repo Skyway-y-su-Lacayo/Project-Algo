@@ -21,16 +21,16 @@ void ScreenGame::enable()
 
 	spaceTopLeft = Instantiate();
 	spaceTopLeft->texture = App->modResources->space;
-	spaceTopLeft->order = -1;
+	spaceTopLeft->order = -2;
 	spaceTopRight = Instantiate();
 	spaceTopRight->texture = App->modResources->space;
-	spaceTopRight->order = -1;
+	spaceTopRight->order = -2;
 	spaceBottomLeft = Instantiate();
 	spaceBottomLeft->texture = App->modResources->space;
-	spaceBottomLeft->order = -1;
+	spaceBottomLeft->order = -2;
 	spaceBottomRight = Instantiate();
 	spaceBottomRight->texture = App->modResources->space;
-	spaceBottomRight->order = -1;
+	spaceBottomRight->order = -2;
 }
 
 void ScreenGame::update()

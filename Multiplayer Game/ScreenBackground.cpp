@@ -7,7 +7,6 @@ void ScreenBackground::enable()
 	background->texture = App->modResources->background;
 	background->size = { 1920.f, 1080.f };
 	background->order = -2;
-	//background->scene = this;
 }
 
 void ScreenBackground::update()

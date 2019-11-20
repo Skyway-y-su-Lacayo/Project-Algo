@@ -42,6 +42,15 @@ void ModuleNetworkingServer::onStart()
 	sendPingTimer.Start();
 	sendReplicationTimer.Start();
 
+	// Instantiate boundaries
+	// Top
+	App->modGameObject->spawnBackground({ 0,550 }, { 1200, 100 });
+	// Bottom
+	App->modGameObject->spawnBackground({ 0,-550 }, { 1200, 100 });
+	// Right
+	App->modGameObject->spawnBackground({ 550,0 }, { 100, 1000 });
+	// Left
+	App->modGameObject->spawnBackground({ -550,0 }, { 100, 1000 });
 }
 
 void ModuleNetworkingServer::onGui()
@@ -414,6 +423,8 @@ GameObject * ModuleNetworkingServer::spawnPlayerShooter(ClientProxy &clientProxy
 	// Create a new game object with the player properties
 	clientProxy.gameObject = Instantiate();
 	clientProxy.gameObject->size = { 100, 100 };
+	// Scale
+	clientProxy.gameObject->size *= App->modGameObject->gameScale;
 	clientProxy.gameObject->angle = 45.0f;
 
 	// Shooter texture
@@ -454,6 +465,8 @@ GameObject * ModuleNetworkingServer::spawnPlayerReflector(ClientProxy & clientPr
 	// Create a new game object with the player properties
 	clientProxy.gameObject = Instantiate();
 	clientProxy.gameObject->size = { 100, 100 };
+	// Scale
+	clientProxy.gameObject->size *= App->modGameObject->gameScale;
 	clientProxy.gameObject->angle = 45.0f;
 
 	// Reflector texture
@@ -489,6 +502,8 @@ GameObject * ModuleNetworkingServer::spawnPlayerReflector(ClientProxy & clientPr
 GameObject * ModuleNetworkingServer::spawnReflectorBarrier(GameObject* parent) {
 	GameObject* reflector_barrier = Instantiate();
 	reflector_barrier->size = { 100, 50 };
+	// Scale
+	reflector_barrier->size *= App->modGameObject->gameScale;
 	reflector_barrier->angle = 0;
 
 	// Texture 
@@ -524,7 +539,7 @@ GameObject * ModuleNetworkingServer::spawnBullet(GameObject *parent, ColliderTyp
 {
 	// Create a new game object with the player properties
 	GameObject *gameObject = Instantiate();
-	gameObject->size = { 20, 60 };
+
 	gameObject->angle = parent->angle;
 	gameObject->position = parent->position;
 
@@ -533,15 +548,21 @@ GameObject * ModuleNetworkingServer::spawnBullet(GameObject *parent, ColliderTyp
 		case ColliderType::SoftLaser: {
 			gameObject->texture = App->modResources->laser;
 			gameObject->tag = ObjectType::SOFT_LASER;
+			gameObject->size = { 20, 60 };
 			break;
 		}
 		case ColliderType::HardLaser: {
 			gameObject->texture = App->modResources->asteroid1;
 			gameObject->tag = ObjectType::HARD_LASER;
+			gameObject->size = { 60, 60 };
 		}
 									 
 	}
 
+	// Scale
+	gameObject->size *= App->modGameObject->gameScale;
+
+	// Create collider
 	gameObject->collider = App->modCollision->addCollider(col_type, gameObject);
 
 	// Create behaviour

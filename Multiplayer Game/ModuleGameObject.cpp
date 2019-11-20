@@ -1,4 +1,5 @@
 #include "Networks.h"
+#include "ModuleGameObject.h"
 
 void GameObject::releaseComponents()
 {
@@ -91,6 +92,17 @@ void ModuleGameObject::Destroy(GameObject * gameObject)
 	ASSERT(gameObject->networkId == 0); // NOTE(jesus): If it has a network identity, it must be destroyed by the Networking module first
 	
 	gameObject->state = GameObject::DESTROYING;
+}
+
+GameObject * ModuleGameObject::spawnBackground(vec2 position, vec2 size) {
+
+	// Instanciate boundaries
+	GameObject* background = Instantiate();
+	background->texture = App->modResources->background;
+	background->position = position;
+	background->size = size;
+	background->order = -1;
+	return background;
 }
 
 GameObject * Instantiate()

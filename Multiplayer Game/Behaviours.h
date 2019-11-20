@@ -1,6 +1,10 @@
 #pragma once
 
 #include "ModuleNetworkingServer.h"
+
+
+vec2 boundaries = { 500,500 };
+
 struct Behaviour
 {
 	GameObject *gameObject = nullptr;
@@ -45,6 +49,20 @@ struct Shooter : public Behaviour
 
 		if (input.verticalAxis > 0.01f)
 			gameObject->position.y -= normalizedSpeed;
+
+		// Boundaries
+
+		if (gameObject->position.x < -boundaries.x)
+			gameObject->position.x = -boundaries.y;
+
+		if (gameObject->position.x > boundaries.x)
+			gameObject->position.x = boundaries.x;
+
+		if (gameObject->position.y < -boundaries.y)
+			gameObject->position.y = -boundaries.y;
+
+		if (gameObject->position.y > boundaries.y) 
+			gameObject->position.y = boundaries.y;
 
 		NetworkUpdate(gameObject);
 
@@ -110,6 +128,21 @@ struct Reflector : public Behaviour {
 
 		if (input.verticalAxis > 0.01f)
 			gameObject->position.y -= normalizedSpeed;
+
+
+		// Boundaries
+
+		if (gameObject->position.x < -boundaries.x)
+			gameObject->position.x = -boundaries.y;
+
+		if (gameObject->position.x > boundaries.x)
+			gameObject->position.x = boundaries.x;
+
+		if (gameObject->position.y < -boundaries.y)
+			gameObject->position.y = -boundaries.y;
+
+		if (gameObject->position.y > boundaries.y)
+			gameObject->position.y = boundaries.y;
 
 		NetworkUpdate(gameObject);
 		NetworkUpdate(reflector_barrier);
