@@ -93,11 +93,14 @@ void ModuleNetworkingClient::onGui()
 			ImGui::Text(" - Network id: %u", networkId);
 
 			vec2 playerPosition = {};
+			float playerAngle = 0;
 			GameObject *playerGameObject = App->modLinkingContext->getNetworkGameObject(networkId);
 			if (playerGameObject != nullptr) {
 				playerPosition = playerGameObject->position;
+				playerAngle = playerGameObject->angle;
 			}
 			ImGui::Text(" - Coordinates: (%f, %f)", playerPosition.x, playerPosition.y);
+			ImGui::Text(" - Angle: %f", playerAngle);
 
 			ImGui::Separator();
 

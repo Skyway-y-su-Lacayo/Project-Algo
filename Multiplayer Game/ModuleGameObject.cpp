@@ -103,7 +103,9 @@ void ModuleGameObject::calculateInterpolation(uint32 not_update)
 
 		float interpolation_coeficient = gameObject.timeSinceLastUpdate.ReadSeconds() / App->modNetServer->getReplicationCadence();
 		vec2 delta_pos = (gameObject.final_pos - gameObject.initial_pos) * interpolation_coeficient;
-		float delta_angle = (gameObject.final_angle - gameObject.initial_angle) * interpolation_coeficient;
+
+		float shortest_angle = ((((int)(gameObject.final_angle - gameObject.initial_angle) % 360) + 540) % 360) - 180;
+		float delta_angle = (int)(shortest_angle * interpolation_coeficient) % 360;
 
 		gameObject.position = gameObject.initial_pos + delta_pos;
 		gameObject.angle = gameObject.initial_angle + delta_angle;
