@@ -200,6 +200,14 @@ void ModuleNetworkingClient::onUpdate()
 		// Check last ping and disconnect
 		managePing(serverAddress);
 
+		// Interpolation: Pass the client's networkID which WON't be interpolated. We use "client side prediction" (Lorien :)
+		App->modGameObject->calculateInterpolation(networkId);
+
+		// ClientSidePrediction
+		if (GameObject* playerGO = App->modLinkingContext->getNetworkGameObject(networkId)) {
+			playerGO->position = playerGO->final_pos;
+			playerGO->angle = playerGO->final_angle;
+		}
 
 		secondsSinceLastInputDelivery += Time.deltaTime;
 

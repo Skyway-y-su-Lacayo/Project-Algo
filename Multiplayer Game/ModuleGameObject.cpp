@@ -94,6 +94,22 @@ void ModuleGameObject::Destroy(GameObject * gameObject)
 	gameObject->state = GameObject::DESTROYING;
 }
 
+void ModuleGameObject::calculateInterpolation(uint32 not_update)
+{
+	for (GameObject &gameObject : App->modGameObject->gameObjects)
+	{
+		if (gameObject.state == GameObject::NON_EXISTING || gameObject.networkId == 0 || gameObject.networkId == not_update) 
+			continue;
+
+		float interpolation_coeficient = gameObject.timeSinceLastUpdate.ReadSeconds() / App->modNetServer->getReplicationCadence();
+		vec2 delta_pos = (gameObject.final_pos - gameObject.initial_pos) * interpolation_coeficient;
+		float delta_angle = (gameObject.final_angle - gameObject.initial_angle) * interpolation_coeficient;
+
+		gameObject.position = gameObject.initial_pos + delta_pos;
+		gameObject.angle = gameObject.initial_angle + delta_angle;
+	}
+}
+
 GameObject * ModuleGameObject::spawnBackground(vec2 position, vec2 size) {
 
 	// Instanciate boundaries

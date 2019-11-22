@@ -19,14 +19,14 @@ void ReplicationManagerClient::read(const InputMemoryStream & packet) {
 				uint32 tag = ObjectType::EMPTY;
 				packet >> tag;
 				GameObject* created = spawnClientObject(tag, networkID);
-				readPos(packet, created);
+				readInitialPos(packet, created);
 				break;
 			}
 			case ReplicationAction::UPDATE:
 			{
 				// This will crash if the object is a nullptr
-				if (GameObject* object = App->modLinkingContext->getNetworkGameObject(networkID))
-					readPos(packet, object);
+				if (GameObject* object = App->modLinkingContext->getNetworkGameObject(networkID)) 
+					interpolationUpdate(packet, object);
 				else
 					ELOG("Gameobject assigned to NetworkID %i doesn not exist, can't update", networkID); 
 
@@ -76,9 +76,21 @@ GameObject* ReplicationManagerClient::spawnClientObject(int tag, uint32 networkI
 	return ret;
 }
 
-void ReplicationManagerClient::readPos(const InputMemoryStream & packet, GameObject * object) {
+void ReplicationManagerClient::readInitialPos(const InputMemoryStream & packet, GameObject * object) {
 	packet >> object->position.x; packet >> object->position.y;
 	packet >> object->angle;
+
+	object->interpolationCreate();
+}
+
+void ReplicationManagerClient::interpolationUpdate(const InputMemoryStream & packet, GameObject * object)
+{
+	vec2 new_pos;
+	float angle;
+	packet >> new_pos.x; packet >> new_pos.y;
+	packet >> angle;
+
+	object->interpolationUpdate(new_pos, angle);
 }
 
 

@@ -11,6 +11,7 @@ public:
 	//////////////////////////////////////////////////////////////////////
 
 	void setListenPort(int port);
+	float getReplicationCadence() { return replicationDeliveryIntervalSeconds; };
 
 
 
