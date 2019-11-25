@@ -4,7 +4,8 @@
 void ReplicationManagerClient::read(const InputMemoryStream & packet) {
 	
 	// Iterate serialized list and execute actions.
-
+	//If i do this, it crashes, wtf?
+	uint32 ByteCount = packet.RemainingByteCount();
 	while (packet.RemainingByteCount() > 0) {
 		ReplicationAction action = ReplicationAction::NONE;
 		uint32 networkID = 0;
@@ -16,10 +17,16 @@ void ReplicationManagerClient::read(const InputMemoryStream & packet) {
 			case ReplicationAction::CREATE:
 			{
 				// Introduce tag to know which object to create
-				uint32 tag = ObjectType::EMPTY;
-				packet >> tag;
-				GameObject* created = spawnClientObject(tag, networkID);
-				readInitialPos(packet, created);
+				GameObject* object = App->modLinkingContext->getNetworkGameObject(networkID);
+				if (!object)
+				{
+					uint32 tag = ObjectType::EMPTY;
+					packet >> tag;
+					GameObject* created = spawnClientObject(tag, networkID);
+					readInitialPos(packet, created);
+				}
+				else
+					ELOG("Trying to create an already existing NetworkID: %i", networkID);
 				break;
 			}
 			case ReplicationAction::UPDATE:

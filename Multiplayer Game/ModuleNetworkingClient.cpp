@@ -165,11 +165,6 @@ void ModuleNetworkingClient::onPacketReceived(const InputMemoryStream &packet, c
 					replicationClient.read(packet);
 				}
 			}
-			if (message == ServerMessage::RepeatReplication) {
-
-				replicationClient.read(packet);
-
-			}
 		}
 	
 }

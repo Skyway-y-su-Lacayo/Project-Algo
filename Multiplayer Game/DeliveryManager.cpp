@@ -102,14 +102,14 @@ void DeliveryManager::processAckdSequenceNumbers(const InputMemoryStream & packe
 
 void DeliveryManager::processTimedOutPackets()
 {
-	for (int i = 0;i<pending_deliveries.size();i++)
+	for (auto it = pending_deliveries.begin(); it != pending_deliveries.end(); it++)
 	{
-		if (pending_deliveries[i]->timer.Read() > MS_TO_DELIVERY_TIMEOUT)
+		if ((*it)->timer.Read() > MS_TO_DELIVERY_TIMEOUT && !(*it)->to_remove)
 		{
 			//TODO CALL ON FAILED
-			//pending_deliveries[i]->delegate->onDeliveryFailure(this);
-
-			//pending_deliveries[i]->to_remove = true;
+			(*it)->to_remove = true;
+			(*it)->delegate->onDeliveryFailure(this);
+			it = pending_deliveries.begin();
 		}
 	}
 
@@ -131,10 +131,6 @@ ReplicationDelegate::ReplicationDelegate(ModuleNetworkingServer* networkingServe
 
 void ReplicationDelegate::onDeliveryFailure(DeliveryManager * deliveryManager)
 {
-	OutputMemoryStream packet;
-	packet << ServerMessage::Replication;
-	Delivery* delivery = deliveryManager->writeSequenceNumber(packet);
-
 	for (int i = 0; i < MAX_CLIENTS; ++i) {
 		if (networkingServer->clientProxies[i].connected) {
 			OutputMemoryStream packet;
@@ -142,7 +138,7 @@ void ReplicationDelegate::onDeliveryFailure(DeliveryManager * deliveryManager)
 			Delivery* delivery = networkingServer->clientProxies[i].deliveryManager.writeSequenceNumber(packet);
 			//TODO find a better way to do this
 			delivery->delegate = new ReplicationDelegate(networkingServer,actions);
-
+			networkingServer->clientProxies[i].replicationManager.ValidateActions(&actions);
 			networkingServer->clientProxies[i].replicationManager.write(packet, delivery);
 
 			networkingServer->sendPacket(packet, networkingServer->clientProxies[i].address);

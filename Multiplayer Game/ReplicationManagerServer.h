@@ -20,4 +20,6 @@ public:
 	std::vector<ReplicationCommand> actions;
 	void writePos(OutputMemoryStream& packet, GameObject* object);
 
+	void ValidateActions(std::vector<ReplicationCommand>* actions); //Used by the delivery manager
+
 };

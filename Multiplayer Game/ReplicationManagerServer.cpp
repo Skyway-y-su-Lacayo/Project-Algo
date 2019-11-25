@@ -67,3 +67,17 @@ void ReplicationManagerServer::writePos(OutputMemoryStream & packet, GameObject 
 	packet << object->position.x; packet << object->position.y;
 	packet << object->angle;
 }
+
+void ReplicationManagerServer::ValidateActions(std::vector<ReplicationCommand>* actions)
+{
+	for (auto item = actions->begin(); item != actions->end(); item++)
+	{
+		GameObject* object = App->modLinkingContext->getNetworkGameObject((*item).networkID);
+		if(!object)
+		{
+			item = actions->erase(item);
+			if (item == actions->end())
+				break;
+		}
+	}
+}
