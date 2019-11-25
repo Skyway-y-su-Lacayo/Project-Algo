@@ -96,9 +96,21 @@ void ModuleGameObject::Destroy(GameObject * gameObject)
 
 void ModuleGameObject::calculateInterpolation(uint32 not_update)
 {
+	uint32 reflector_id = 0;
+	GameObject* curr_player = GetGameObejctFromNetworkID(not_update);
+	if (curr_player)
+	{
+		if (curr_player->tag == REFLECTOR)
+		{
+			if(Reflector* behaviour = (Reflector*)curr_player->behaviour)
+				reflector_id = behaviour->reflector_barrier->networkId;
+		}
+	}
+
+
 	for (GameObject &gameObject : App->modGameObject->gameObjects)
 	{
-		if (gameObject.state == GameObject::NON_EXISTING || gameObject.networkId == 0 || gameObject.networkId == not_update) 
+		if (gameObject.state == GameObject::NON_EXISTING || gameObject.networkId == 0 || gameObject.networkId == not_update || gameObject.networkId == reflector_id) 
 			continue;
 
 		float interpolation_coeficient = gameObject.timeSinceLastUpdate.ReadSeconds() / App->modNetServer->getReplicationCadence();
@@ -110,6 +122,17 @@ void ModuleGameObject::calculateInterpolation(uint32 not_update)
 		gameObject.position = gameObject.initial_pos + delta_pos;
 		gameObject.angle = gameObject.initial_angle + delta_angle;
 	}
+}
+
+GameObject * ModuleGameObject::GetGameObejctFromNetworkID(uint32 id)
+{
+	GameObject* ret = nullptr;
+	for (GameObject &gameObject : App->modGameObject->gameObjects)
+	{
+		if (gameObject.networkId == id)
+			ret = &gameObject;
+	}
+	return ret;
 }
 
 GameObject * ModuleGameObject::spawnBackground(vec2 position, vec2 size) {

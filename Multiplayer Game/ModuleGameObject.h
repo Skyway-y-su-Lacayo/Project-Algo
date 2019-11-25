@@ -103,7 +103,7 @@ public:
 
 	void calculateInterpolation(uint32 not_update); // Modify position and angle based on initial, final and timeSinceLastUpdate
 
-
+	GameObject* GetGameObejctFromNetworkID(uint32 id);
 
 	GameObject gameObjects[MAX_GAME_OBJECTS] = {};
 	float gameScale = 0.5;
