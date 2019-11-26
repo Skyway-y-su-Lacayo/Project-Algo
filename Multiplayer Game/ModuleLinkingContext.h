@@ -10,6 +10,11 @@ public:
 
 	GameObject *getNetworkGameObject(uint32 networkId);
 
+	bool IsSlotCorrect(uint32 networkId);
+
+	//Only to be used with IsSlutCorrect
+	GameObject* getNetworkGameObjectDeLosChinos(uint32 networkId);
+
 	void getNetworkGameObjects(GameObject *gameObjects[MAX_NETWORK_OBJECTS], uint16 *count);
 
 	uint16 getNetworkGameObjectsCount() const;

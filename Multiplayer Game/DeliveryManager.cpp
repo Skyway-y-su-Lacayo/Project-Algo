@@ -131,17 +131,17 @@ ReplicationDelegate::ReplicationDelegate(ModuleNetworkingServer* networkingServe
 
 void ReplicationDelegate::onDeliveryFailure(DeliveryManager * deliveryManager)
 {
-	//for (int i = 0; i < MAX_CLIENTS; ++i) {
-	//	if (networkingServer->clientProxies[i].connected) {
-	//		OutputMemoryStream packet;
-	//		packet << ServerMessage::Replication;
-	//		Delivery* delivery = networkingServer->clientProxies[i].deliveryManager.writeSequenceNumber(packet);
-	//		//TODO find a better way to do this
-	//		delivery->delegate = new ReplicationDelegate(networkingServer,actions);
-	//		networkingServer->clientProxies[i].replicationManager.ValidateActions(&actions);
-	//		networkingServer->clientProxies[i].replicationManager.write(packet, delivery);
+	for (int i = 0; i < MAX_CLIENTS; ++i) {
+		if (networkingServer->clientProxies[i].connected) {
+			OutputMemoryStream packet;
+			packet << ServerMessage::Replication;
+			Delivery* delivery = networkingServer->clientProxies[i].deliveryManager.writeSequenceNumber(packet);
+			//TODO find a better way to do this
+			delivery->delegate = new ReplicationDelegate(networkingServer,actions);
+			networkingServer->clientProxies[i].replicationManager.ValidateActions(&actions);
+			networkingServer->clientProxies[i].replicationManager.write(packet, delivery);
 
-	//		networkingServer->sendPacket(packet, networkingServer->clientProxies[i].address);
-	//	}
-	//}
+			networkingServer->sendPacket(packet, networkingServer->clientProxies[i].address);
+		}
+	}
 }

@@ -5,7 +5,6 @@ void ReplicationManagerClient::read(const InputMemoryStream & packet) {
 	
 	// Iterate serialized list and execute actions.
 	//If i do this, it crashes, wtf?
-	uint32 ByteCount = packet.RemainingByteCount();
 	while (packet.RemainingByteCount() > 0) {
 		ReplicationAction action = ReplicationAction::NONE;
 		uint32 networkID = 0;
@@ -16,31 +15,39 @@ void ReplicationManagerClient::read(const InputMemoryStream & packet) {
 		switch (action) {
 			case ReplicationAction::CREATE:
 			{
-				// Introduce tag to know which object to create
-				GameObject* object = App->modLinkingContext->getNetworkGameObject(networkID);
-				if (!object)
+				// Introduce tag to know which object to create				
+				uint32 tag = ObjectType::EMPTY;
+				packet >> tag;
+				if (App->modLinkingContext->IsSlotCorrect(networkID))
 				{
-					uint32 tag = ObjectType::EMPTY;
-					packet >> tag;
 					GameObject* created = spawnClientObject(tag, networkID);
 					readInitialPos(packet, created);
 				}
-				else
-					ELOG("Trying to create an already existing NetworkID: %i", networkID);
+				else {
+					GameObject* object = App->modLinkingContext->getNetworkGameObjectDeLosChinos(networkID);
+					App->modLinkingContext->unregisterNetworkGameObject(object);
+					Destroy(object);
+
+					GameObject* created = spawnClientObject(tag, networkID);
+					readInitialPos(packet, created);
+					ELOG("Justice strikes again");
+				}
+
 				break;
 			}
 			case ReplicationAction::UPDATE:
 			{
 				// This will crash if the object is a nullptr
-				if (GameObject* object = App->modLinkingContext->getNetworkGameObject(networkID)) 
-					interpolationUpdate(packet, object);
-				else
-					ELOG("Gameobject assigned to NetworkID %i doesn not exist, can't update", networkID); 
+				GameObject* object = App->modLinkingContext->getNetworkGameObject(networkID);
+				if(!interpolationUpdate(packet, object))
+					ELOG("Trying to update an unexisting NetworkID: %i", networkID);
+
 
 				break;
 			}
 			case ReplicationAction::DESTROY:
 			{
+				
 				GameObject* object = App->modLinkingContext->getNetworkGameObject(networkID);
 				if(object){
 					App->modLinkingContext->unregisterNetworkGameObject(object);
@@ -83,21 +90,33 @@ GameObject* ReplicationManagerClient::spawnClientObject(int tag, uint32 networkI
 	return ret;
 }
 
-void ReplicationManagerClient::readInitialPos(const InputMemoryStream & packet, GameObject * object) {
+bool  ReplicationManagerClient::readInitialPos(const InputMemoryStream & packet, GameObject * object) {
+	bool ret = false;
 	packet >> object->position.x; packet >> object->position.y;
 	packet >> object->angle;
 
-	object->interpolationCreate();
+	if (object) {
+		ret = true;
+		object->interpolationCreate();
+	}
+	return ret;
 }
 
-void ReplicationManagerClient::interpolationUpdate(const InputMemoryStream & packet, GameObject * object)
+
+bool ReplicationManagerClient::interpolationUpdate(const InputMemoryStream & packet, GameObject * object)
 {
+	bool ret = false;
 	vec2 new_pos;
 	float angle;
 	packet >> new_pos.x; packet >> new_pos.y;
 	packet >> angle;
 
-	object->interpolationUpdate(new_pos, angle);
+	if (object) {
+		ret = true;
+		object->interpolationUpdate(new_pos, angle);
+	}
+
+	return ret;
 }
 
 

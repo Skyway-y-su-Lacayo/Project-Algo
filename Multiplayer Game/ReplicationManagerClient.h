@@ -8,6 +8,6 @@ public:
 	void read(const InputMemoryStream& packet);
 	GameObject* spawnClientObject(int tag, uint32 networkID);
 
-	void readInitialPos(const InputMemoryStream& packet, GameObject* object);
-	void interpolationUpdate(const InputMemoryStream& packet, GameObject* object);
+	bool readInitialPos(const InputMemoryStream& packet, GameObject* object);
+	bool interpolationUpdate(const InputMemoryStream& packet, GameObject* object);
 };

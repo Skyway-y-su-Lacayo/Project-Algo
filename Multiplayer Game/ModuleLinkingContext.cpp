@@ -1,4 +1,5 @@
 #include "Networks.h"
+#include "ModuleLinkingContext.h"
 
 
 void ModuleLinkingContext::registerNetworkGameObject(GameObject *gameObject)
@@ -22,6 +23,7 @@ void ModuleLinkingContext::registerNetworkGameObjectWithNetworkId(GameObject * g
 	uint16 arrayIndex = arrayIndexFromNetworkId(networkId);
 	ASSERT(arrayIndex < MAX_NETWORK_OBJECTS);
 	ASSERT(networkGameObjects[arrayIndex] == nullptr);
+	ASSERT(networkId != 0);
 	networkGameObjects[arrayIndex] = gameObject;
 	gameObject->networkId = networkId;
 	networkGameObjectsCount++;
@@ -35,6 +37,31 @@ GameObject * ModuleLinkingContext::getNetworkGameObject(uint32 networkId)
 	GameObject *gameObject = networkGameObjects[arrayIndex];
 
 	if (gameObject != nullptr && gameObject->networkId == networkId)
+	{
+		return gameObject;
+	}
+	else
+	{
+		return nullptr;
+	}
+}
+
+//Destruir el objecto antiguo antes de añadir el nuevo.
+// Es bien di despues usamos nuestro papito ISsLOTcORRECT PORK LA NETWORKID SERA DIFERENTE ENTONSES NO L0O DESTRUIRA. NO TE OLVBIDES DE LLAMAR A LA FUNCION EN CASO DE REPLICATION::DSETROI
+
+bool ModuleLinkingContext::IsSlotCorrect(uint32 networkId)
+{
+	return !networkGameObjects[arrayIndexFromNetworkId(networkId)];
+}
+
+GameObject * ModuleLinkingContext::getNetworkGameObjectDeLosChinos(uint32 networkId)
+{
+	uint16 arrayIndex = arrayIndexFromNetworkId(networkId);
+	ASSERT(arrayIndex < MAX_NETWORK_OBJECTS);
+
+	GameObject *gameObject = networkGameObjects[arrayIndex];
+
+	if (gameObject != nullptr)
 	{
 		return gameObject;
 	}
