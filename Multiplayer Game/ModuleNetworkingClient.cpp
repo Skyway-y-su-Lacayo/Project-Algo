@@ -313,9 +313,10 @@ GameObject* ModuleNetworkingClient::spawnPlayer(uint32 networkID, uint8 tag, uin
 		case ObjectType::SHOOTER: {
 			if(team == ObjectTeam::TEAM_1)
 				gameObject->texture = App->modResources->T1_Shooter;
-			else
+			else {
 				gameObject->texture = App->modResources->T2_Shooter;
-
+				gameObject->size = { 130, 130 };
+			}
 			break;
 		}
 		case ObjectType::REFLECTOR: {
