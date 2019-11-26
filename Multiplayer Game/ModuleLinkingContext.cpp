@@ -54,7 +54,7 @@ bool ModuleLinkingContext::IsSlotCorrect(uint32 networkId)
 	return !networkGameObjects[arrayIndexFromNetworkId(networkId)];
 }
 
-GameObject * ModuleLinkingContext::getNetworkGameObjectDeLosChinos(uint32 networkId)
+GameObject * ModuleLinkingContext::getNetworkGameObjectBySlot(uint32 networkId)
 {
 	uint16 arrayIndex = arrayIndexFromNetworkId(networkId);
 	ASSERT(arrayIndex < MAX_NETWORK_OBJECTS);
