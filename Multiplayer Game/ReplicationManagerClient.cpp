@@ -18,21 +18,15 @@ void ReplicationManagerClient::read(const InputMemoryStream & packet) {
 				// Introduce tag to know which object to create				
 				uint32 tag = ObjectType::EMPTY;
 				packet >> tag;
-				if (App->modLinkingContext->IsSlotCorrect(networkID))
-				{
-					GameObject* created = spawnClientObject(tag, networkID);
-					readInitialPos(packet, created);
-				}
-				else {
-					GameObject* object = App->modLinkingContext->getNetworkGameObjectDeLosChinos(networkID);
+				if (!App->modLinkingContext->IsSlotCorrect(networkID)){
+					// Delete object which is in the slot (destroy has been lost)
+					GameObject* object = App->modLinkingContext->getNetworkGameObjectBySlot(networkID);
 					App->modLinkingContext->unregisterNetworkGameObject(object);
 					Destroy(object);
-
-					GameObject* created = spawnClientObject(tag, networkID);
-					readInitialPos(packet, created);
-					ELOG("Justice strikes again");
+					ELOG("Assuming %i gameObject needs to be deleted");
 				}
-
+				GameObject* created = spawnClientObject(tag, networkID);
+				readInitialPos(packet, created);
 				break;
 			}
 			case ReplicationAction::UPDATE:
@@ -53,7 +47,7 @@ void ReplicationManagerClient::read(const InputMemoryStream & packet) {
 					App->modLinkingContext->unregisterNetworkGameObject(object);
 					Destroy(object);
 				}
-				else
+				else // A new create has arrived so the object was already deleted
 					ELOG("Gameobject assigned to NetworkID %i doesn not exist, can't destroy", networkID);
 				break;
 			}

@@ -28,8 +28,8 @@ void ReplicationManagerServer::write(OutputMemoryStream & packet, Delivery* deli
 	for (auto action : actions) {
 		// Action and network id commun to all
 
-		if (action.action == ReplicationAction::UPDATE && !App->modLinkingContext->getNetworkGameObject(action.networkID))
-			continue; // Don't update if the object doesn't exist anymore
+		if ((action.action == ReplicationAction::UPDATE || action.action == ReplicationAction::CREATE) && !App->modLinkingContext->getNetworkGameObject(action.networkID))
+			continue; // Don't update/create if the object doesn't exist anymore
 
 		packet << action.action;
 		packet << action.networkID;
