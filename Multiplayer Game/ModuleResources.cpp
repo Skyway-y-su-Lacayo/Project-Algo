@@ -34,11 +34,11 @@ bool ModuleResources::init()
 	loadTextureAsync("space_background.jpg", &space);
 	loadTextureAsync("asteroid1.png",        &asteroid1);
 	loadTextureAsync("asteroid2.png",        &asteroid2);
-	loadTextureAsync("spacecraft1.png",      &spacecraft1);
-	loadTextureAsync("spacecraft2.png",      &spacecraft2);
+	loadTextureAsync("T1_ASHE_BODY.png",      &spacecraft1);
+	loadTextureAsync("T1_BRAUM_BODY.png",      &spacecraft2);
 	loadTextureAsync("spacecraft3.png",      &spacecraft3);
 	loadTextureAsync("laser.png",            &laser);
-	loadTextureAsync("reflector.png",		 &reflector);
+	loadTextureAsync("T1_BRAUM_SHIELD.png",		 &reflector);
 #endif
 
 	return true;
