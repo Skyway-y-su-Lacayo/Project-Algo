@@ -96,6 +96,10 @@ struct Shooter : public Behaviour
 
 };
 
+struct ShooterClient : public Behaviour
+{
+
+};
 // Movement: WASD / PAD + Mouse for orientation+
 // Dash?: Spacebar
 // Action: Has a reflector in front of him with the same orientation
@@ -181,6 +185,11 @@ struct Reflector : public Behaviour {
 	}
 };
 
+struct ReflectorClient : public Behaviour
+{
+
+};
+
 struct ReflectorBarrier : public Behaviour {
 
 	bool create_bullet = false;
@@ -196,9 +205,13 @@ struct ReflectorBarrier : public Behaviour {
 			NetworkDestroy(c2.gameObject); // Destroy the laser
 
 			create_bullet = true; // Can't create colliders in the middle of an iteration
-
 		}
 	}
+};
+
+struct ReflectorBarrierClient : public Behaviour
+{
+
 };
 
 struct Laser : public Behaviour
