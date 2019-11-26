@@ -32,13 +32,19 @@ bool ModuleResources::init()
 	completionRatio = 1.0f;
 #else
 	loadTextureAsync("space_background.jpg", &space);
-	loadTextureAsync("asteroid1.png",        &asteroid1);
-	loadTextureAsync("asteroid2.png",        &asteroid2);
-	loadTextureAsync("T1_ASHE_BODY.png",      &spacecraft1);
-	loadTextureAsync("T1_BRAUM_BODY.png",      &spacecraft2);
-	loadTextureAsync("spacecraft3.png",      &spacecraft3);
-	loadTextureAsync("laser.png",            &laser);
-	loadTextureAsync("T1_BRAUM_SHIELD.png",		 &reflector);
+	// T1 Textures
+	loadTextureAsync("T1_ASHE_BODY.png", &T1_Shooter);
+	loadTextureAsync("T1_SOFT_PROJECTILE.png", &T1_SoftProjectile);
+	loadTextureAsync("T1_BRAUM_BODY.png", &T1_Reflector);
+	loadTextureAsync("T1_BRAUM_SHIELD.png", &T1_ReflectorBarrier);
+	loadTextureAsync("T1_HARD_PROJECTILE.png", &T1_HardProjectile);
+	// T2 Textures
+	loadTextureAsync("T2_JAYCE_BODY.png", &T2_Shooter);
+	loadTextureAsync("T1_SOFT_PROJECTILE.png", &T2_SoftProjectile); // TODO(Lorien)
+	loadTextureAsync("T2_MAFIA_BRAUM_BODY.png", &T2_Reflector);
+	loadTextureAsync("T2_MAFIA_BRAUM_SHIELD.png", &T2_ReflectorBarrier);
+	loadTextureAsync("T1_HARD_PROJECTILE.png", &T2_HardProjectile); // TODO(Lorien)
+
 #endif
 
 	return true;

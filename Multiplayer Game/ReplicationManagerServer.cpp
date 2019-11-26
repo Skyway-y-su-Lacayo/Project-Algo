@@ -41,6 +41,7 @@ void ReplicationManagerServer::write(OutputMemoryStream & packet, Delivery* deli
 				GameObject* object = App->modLinkingContext->getNetworkGameObject(action.networkID);
 
 				packet << object->tag;
+				packet << object->team;
 				writePos(packet, object);
 				break;
 			}

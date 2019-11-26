@@ -428,7 +428,10 @@ GameObject * ModuleNetworkingServer::spawnPlayerShooter(ClientProxy &clientProxy
 	clientProxy.gameObject->angle = 45.0f;
 
 	// Shooter texture
-	clientProxy.gameObject->texture = App->modResources->spacecraft1;
+	if(team == ObjectTeam::TEAM_1)
+		clientProxy.gameObject->texture = App->modResources->T1_Shooter;
+	else
+		clientProxy.gameObject->texture = App->modResources->T2_Shooter;
 
 	// Create collider
 	clientProxy.gameObject->collider = App->modCollision->addCollider(ColliderType::Player, clientProxy.gameObject);
@@ -470,7 +473,11 @@ GameObject * ModuleNetworkingServer::spawnPlayerReflector(ClientProxy & clientPr
 	clientProxy.gameObject->angle = 45.0f;
 
 	// Reflector texture
-	clientProxy.gameObject->texture = App->modResources->spacecraft2;
+	if(team == ObjectTeam::TEAM_1)
+		clientProxy.gameObject->texture = App->modResources->T1_Reflector;
+	else 
+		clientProxy.gameObject->texture = App->modResources->T2_Reflector;
+
 
 	// Create collider
 	clientProxy.gameObject->collider = App->modCollision->addCollider(ColliderType::Player, clientProxy.gameObject);
@@ -507,7 +514,10 @@ GameObject * ModuleNetworkingServer::spawnReflectorBarrier(GameObject* parent) {
 	reflector_barrier->angle = 0;
 
 	// Texture 
-	reflector_barrier->texture = App->modResources->reflector;
+	if(parent->team == ObjectTeam::TEAM_1)
+		reflector_barrier->texture = App->modResources->T1_ReflectorBarrier;
+	else
+		reflector_barrier->texture = App->modResources->T2_ReflectorBarrier;
 
 	// Create collider
 	reflector_barrier->collider = App->modCollision->addCollider(ColliderType::Player, reflector_barrier);
@@ -546,13 +556,21 @@ GameObject * ModuleNetworkingServer::spawnBullet(GameObject *parent, ColliderTyp
 	// Tag and texture
 	switch (col_type) {
 		case ColliderType::SoftLaser: {
-			gameObject->texture = App->modResources->laser;
+			if (parent->team == ObjectTeam::TEAM_1)
+				gameObject->texture = App->modResources->T1_SoftProjectile;
+			else
+				gameObject->texture = App->modResources->T2_SoftProjectile;
+
 			gameObject->tag = ObjectType::SOFT_LASER;
 			gameObject->size = { 20, 60 };
 			break;
 		}
 		case ColliderType::HardLaser: {
-			gameObject->texture = App->modResources->asteroid1;
+			if (parent->team == ObjectTeam::TEAM_1)
+				gameObject->texture = App->modResources->T1_HardProjectile;
+			else
+				gameObject->texture = App->modResources->T2_HardProjectile;
+
 			gameObject->tag = ObjectType::HARD_LASER;
 			gameObject->size = { 60, 60 };
 		}

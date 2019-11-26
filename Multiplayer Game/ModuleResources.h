@@ -10,13 +10,19 @@ public:
 
 	Texture *background = nullptr;
 	Texture *space = nullptr;
-	Texture *asteroid1 = nullptr;
-	Texture *asteroid2 = nullptr;
-	Texture *spacecraft1 = nullptr;
-	Texture *spacecraft2 = nullptr;
-	Texture *spacecraft3 = nullptr;
-	Texture *reflector = nullptr;
-	Texture *laser = nullptr;
+
+	Texture* T1_Shooter = nullptr;
+	Texture* T1_SoftProjectile = nullptr;
+	Texture* T1_Reflector = nullptr;
+	Texture* T1_ReflectorBarrier = nullptr;
+	Texture* T1_HardProjectile = nullptr;
+
+	Texture* T2_Shooter = nullptr;
+	Texture* T2_SoftProjectile = nullptr;
+	Texture* T2_Reflector = nullptr;
+	Texture* T2_ReflectorBarrier = nullptr;
+	Texture* T2_HardProjectile = nullptr;
+
 
 	bool finishedLoading = false;
 private:

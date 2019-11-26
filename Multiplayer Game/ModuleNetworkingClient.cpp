@@ -302,7 +302,7 @@ void ModuleNetworkingClient::managePing(sockaddr_in otherAddress) {
 
 }
 
-GameObject* ModuleNetworkingClient::spawnPlayer(uint32 networkID, uint8 tag) {
+GameObject* ModuleNetworkingClient::spawnPlayer(uint32 networkID, uint8 tag, uint8 team) {
 
 	GameObject* gameObject = Instantiate();
 	gameObject->size = { 100, 100 };
@@ -311,11 +311,19 @@ GameObject* ModuleNetworkingClient::spawnPlayer(uint32 networkID, uint8 tag) {
 
 	switch (tag) {
 		case ObjectType::SHOOTER: {
-			gameObject->texture = App->modResources->spacecraft1;
+			if(team == ObjectTeam::TEAM_1)
+				gameObject->texture = App->modResources->T1_Shooter;
+			else
+				gameObject->texture = App->modResources->T2_Shooter;
+
 			break;
 		}
 		case ObjectType::REFLECTOR: {
-			gameObject->texture = App->modResources->spacecraft2;
+			if (team == ObjectTeam::TEAM_1)
+				gameObject->texture = App->modResources->T1_Reflector;
+			else 
+				gameObject->texture = App->modResources->T2_Reflector;
+
 			break;
 		}
 	}
@@ -332,7 +340,7 @@ GameObject* ModuleNetworkingClient::spawnPlayer(uint32 networkID, uint8 tag) {
 	return gameObject;
 }
 
-GameObject* ModuleNetworkingClient::spawnReflector(uint32 networkID) {
+GameObject* ModuleNetworkingClient::spawnReflectorBarrier(uint32 networkID, uint8 team) {
 
 	GameObject* gameObject = Instantiate();
 	gameObject->size = { 100, 50 };
@@ -340,8 +348,10 @@ GameObject* ModuleNetworkingClient::spawnReflector(uint32 networkID) {
 	gameObject->size *= App->modGameObject->gameScale;
 	gameObject->angle = 45.0f;
 
-
-	gameObject->texture = App->modResources->reflector;
+	if (team == ObjectTeam::TEAM_1)
+		gameObject->texture = App->modResources->T1_ReflectorBarrier;
+	else 
+		gameObject->texture = App->modResources->T2_ReflectorBarrier;
 	// No collider needed
 
 	// No behaviour needed
@@ -356,7 +366,7 @@ GameObject* ModuleNetworkingClient::spawnReflector(uint32 networkID) {
 
 }
 
-GameObject* ModuleNetworkingClient::spawnBullet(uint32 networkID, uint8 tag) {
+GameObject* ModuleNetworkingClient::spawnBullet(uint32 networkID, uint8 tag, uint8 team) {
 
 	GameObject* gameObject = Instantiate();
 
@@ -364,12 +374,21 @@ GameObject* ModuleNetworkingClient::spawnBullet(uint32 networkID, uint8 tag) {
 
 	switch (tag) {
 		case ObjectType::SOFT_LASER: {
-			gameObject->texture = App->modResources->laser;
+
+			if (team == ObjectTeam::TEAM_1)
+				gameObject->texture = App->modResources->T1_SoftProjectile;
+			else
+				gameObject->texture = App->modResources->T2_SoftProjectile;
+
 			gameObject->size = { 20, 60 };
 			break;
 		}
 		case ObjectType::HARD_LASER: {
-			gameObject->texture = App->modResources->asteroid1;
+
+			if (team == ObjectTeam::TEAM_1)
+				gameObject->texture = App->modResources->T1_HardProjectile;
+			else
+				gameObject->texture = App->modResources->T2_HardProjectile;
 			gameObject->size = { 60, 60 };
 			break;
 		}

@@ -17,7 +17,9 @@ void ReplicationManagerClient::read(const InputMemoryStream & packet) {
 			{
 				// Introduce tag to know which object to create				
 				uint32 tag = ObjectType::EMPTY;
+				uint32 team = ObjectTeam::TEAM_1;
 				packet >> tag;
+				packet >> team;
 				if (!App->modLinkingContext->IsSlotCorrect(networkID)){
 					// Delete object which is in the slot (destroy has been lost)
 					GameObject* object = App->modLinkingContext->getNetworkGameObjectBySlot(networkID);
@@ -25,7 +27,7 @@ void ReplicationManagerClient::read(const InputMemoryStream & packet) {
 					Destroy(object);
 					ELOG("Assuming %i gameObject needs to be deleted");
 				}
-				GameObject* created = spawnClientObject(tag, networkID);
+				GameObject* created = spawnClientObject(networkID, tag, team);
 				readInitialPos(packet, created);
 				break;
 			}
@@ -55,7 +57,7 @@ void ReplicationManagerClient::read(const InputMemoryStream & packet) {
 	}
 }
 
-GameObject* ReplicationManagerClient::spawnClientObject(int tag, uint32 networkID) {
+GameObject* ReplicationManagerClient::spawnClientObject(uint32 networkID, uint32 tag, uint32 team) {
 
 	GameObject* ret = nullptr;
 
@@ -64,18 +66,18 @@ GameObject* ReplicationManagerClient::spawnClientObject(int tag, uint32 networkI
 		case ObjectType::REFLECTOR: 
 		{
 			// Spawn shooter/reflector
-			ret = App->modNetClient->spawnPlayer(networkID, tag);
+			ret = App->modNetClient->spawnPlayer(networkID, tag, team);
 			break;
 		}
 		case ObjectType::REFLECTOR_BARRIER: 
 		{
-			ret = App->modNetClient->spawnReflector(networkID);
+			ret = App->modNetClient->spawnReflectorBarrier(networkID, team);
 			break;
 		}
 		case ObjectType::SOFT_LASER: 
 		case ObjectType::HARD_LASER:
 		{
-			ret = App->modNetClient->spawnBullet(networkID, tag);
+			ret = App->modNetClient->spawnBullet(networkID, tag, team);
 
 			break;
 		}
