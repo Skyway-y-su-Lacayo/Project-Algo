@@ -51,7 +51,7 @@ void ScreenMainMenu::gui()
 	const char* spaceshipTypes[] = { "Shooter", "Reflector"};
 	static const char* spaceshipTypeStr = spaceshipTypes[0];
 	static uint8 spaceshipType = ObjectType::SHOOTER;
-	if (ImGui::BeginCombo("Spaceship##combo", spaceshipTypeStr)) // The second parameter is the label previewed before opening the combo.
+	if (ImGui::BeginCombo("Character##combo", spaceshipTypeStr)) // The second parameter is the label previewed before opening the combo.
 	{
 		for (uint8 i = 0; i < IM_ARRAYSIZE(spaceshipTypes); i++)
 		{

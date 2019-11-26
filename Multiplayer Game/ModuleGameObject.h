@@ -106,7 +106,7 @@ public:
 	GameObject* GetGameObejctFromNetworkID(uint32 id);
 
 	GameObject gameObjects[MAX_GAME_OBJECTS] = {};
-	float gameScale = 0.5;
+	float gameScale = 0.8;
 
 	GameObject* spawnBackground(vec2 position, vec2 size);
 };
