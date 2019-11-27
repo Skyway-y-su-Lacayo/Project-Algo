@@ -132,6 +132,12 @@ struct ShooterClient : public Behaviour
 		if (gameObject->position.y > boundaries.y)
 			gameObject->position.y = boundaries.y;
 
+		if (gameObject->new_packet)
+		{
+			gameObject->position = gameObject->final_pos;
+			gameObject->angle = gameObject->final_angle;
+			gameObject->new_packet = false;
+		}
 		// Angle of go depending on mouse position
 		gameObject->angle = atan2(mouse.x, -mouse.y) * 180 / PI;
 	}
@@ -224,6 +230,8 @@ struct Reflector : public Behaviour {
 struct ReflectorClient : public Behaviour
 {
 	const float speed = 200.0f;
+	GameObject* reflector_barrier = nullptr;
+	float barrier_offset = 50;
 
 	ReflectorClient(GameObject* go) { gameObject = go; };
 	void onInput(const InputController &input, const MouseController &mouse) override {
@@ -260,7 +268,13 @@ struct ReflectorClient : public Behaviour
 		// Angle of go depending on mouse position
 		gameObject->angle = atan2(mouse.x, -mouse.y) * 180 / PI;
 
-
+		if (reflector_barrier)
+		{
+			vec2 forward = { mouse.x, mouse.y };
+			forward = normalize(forward);
+			reflector_barrier->position = gameObject->position + forward * barrier_offset;
+			reflector_barrier->angle = gameObject->angle;
+		}
 		// Update reflection barrier
 		//vec2 forward = { mouse.x, mouse.y };
 		//forward = normalize(forward);
@@ -287,11 +301,6 @@ struct ReflectorBarrier : public Behaviour {
 			create_bullet = true; // Can't create colliders in the middle of an iteration
 		}
 	}
-};
-
-struct ReflectorBarrierClient : public Behaviour
-{
-
 };
 
 struct Laser : public Behaviour

@@ -25,6 +25,8 @@ struct GameObject
 
 	Timer timeSinceLastUpdate; // Calculate interpolation percentage "ModuleNetworkingServer::replicationDeliveryIntervalSeconds"
 
+	bool new_packet;
+
 	void interpolationCreate() {
 		initial_pos = final_pos = position;
 		initial_angle = final_angle = angle;
@@ -38,6 +40,8 @@ struct GameObject
 
 		final_pos = serv_pos;
 		final_angle = serv_angle;
+
+		new_packet = true;
 
 		timeSinceLastUpdate.Start();
 	}

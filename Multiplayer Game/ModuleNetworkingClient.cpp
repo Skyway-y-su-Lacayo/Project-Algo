@@ -209,7 +209,6 @@ void ModuleNetworkingClient::onUpdate()
 		if (GameObject* playerGO = App->modLinkingContext->getNetworkGameObject(networkId)) {
 			if (clientside_prediction)
 			{
-
 				MouseController mouse;
 				vec2 winSize = App->modRender->getWindowsSize();
 				mouse.x = Mouse.x - winSize.x / 2;
@@ -384,6 +383,15 @@ GameObject* ModuleNetworkingClient::spawnReflectorBarrier(uint32 networkID, uint
 	// Assign a new network identity to the object
 	App->modLinkingContext->registerNetworkGameObjectWithNetworkId(gameObject, networkID);
 
+	//Find the Reflector for the barrier
+	if (GameObject* playerGO = App->modLinkingContext->getNetworkGameObject(networkId)) {
+		if (gameObject->team == playerGO->team && playerGO->tag == ObjectType::REFLECTOR)
+		{
+			ReflectorClient* behaviour = (ReflectorClient*)playerGO->behaviour;
+			if (!behaviour->reflector_barrier)
+				behaviour->reflector_barrier = gameObject;
+		}
+	}
 	return gameObject;
 
 }
