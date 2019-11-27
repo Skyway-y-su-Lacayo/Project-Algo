@@ -70,6 +70,8 @@ private:
 	uint32 playerId = 0;
 	uint32 networkId = 0;
 
+	// ClientSide Prediction
+	bool clientside_prediction = true;
 
 	// Input ///////////
 

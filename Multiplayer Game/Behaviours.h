@@ -98,7 +98,43 @@ struct Shooter : public Behaviour
 
 struct ShooterClient : public Behaviour
 {
+	const float speed = 200.0f;
 
+	ShooterClient(GameObject* go) { gameObject = go; };
+
+	void onInput(const InputController &input, const MouseController &mouse) override
+	{
+		float normalizedSpeed = speed * Time.deltaTime;
+
+		if (input.horizontalAxis < -0.01f)
+			gameObject->position.x -= normalizedSpeed;
+
+		if (input.horizontalAxis > 0.01f)
+			gameObject->position.x += normalizedSpeed;
+
+		if (input.verticalAxis < -0.01f)
+			gameObject->position.y += normalizedSpeed;
+
+		if (input.verticalAxis > 0.01f)
+			gameObject->position.y -= normalizedSpeed;
+
+		// Boundaries
+
+		if (gameObject->position.x < -boundaries.x)
+			gameObject->position.x = -boundaries.y;
+
+		if (gameObject->position.x > boundaries.x)
+			gameObject->position.x = boundaries.x;
+
+		if (gameObject->position.y < -boundaries.y)
+			gameObject->position.y = -boundaries.y;
+
+		if (gameObject->position.y > boundaries.y)
+			gameObject->position.y = boundaries.y;
+
+		// Angle of go depending on mouse position
+		gameObject->angle = atan2(mouse.x, -mouse.y) * 180 / PI;
+	}
 };
 // Movement: WASD / PAD + Mouse for orientation+
 // Dash?: Spacebar
@@ -187,7 +223,51 @@ struct Reflector : public Behaviour {
 
 struct ReflectorClient : public Behaviour
 {
+	const float speed = 200.0f;
 
+	ReflectorClient(GameObject* go) { gameObject = go; };
+	void onInput(const InputController &input, const MouseController &mouse) override {
+
+		float normalizedSpeed = speed * Time.deltaTime;
+
+		if (input.horizontalAxis < -0.01f)
+			gameObject->position.x -= normalizedSpeed;
+
+		if (input.horizontalAxis > 0.01f)
+			gameObject->position.x += normalizedSpeed;
+
+		if (input.verticalAxis < -0.01f)
+			gameObject->position.y += normalizedSpeed;
+
+		if (input.verticalAxis > 0.01f)
+			gameObject->position.y -= normalizedSpeed;
+
+
+		// Boundaries
+
+		//if (gameObject->position.x < -boundaries.x)
+		//	gameObject->position.x = -boundaries.y;
+
+		//if (gameObject->position.x > boundaries.x)
+		//	gameObject->position.x = boundaries.x;
+
+		//if (gameObject->position.y < -boundaries.y)
+		//	gameObject->position.y = -boundaries.y;
+
+		//if (gameObject->position.y > boundaries.y)
+		//	gameObject->position.y = boundaries.y;
+
+		// Angle of go depending on mouse position
+		gameObject->angle = atan2(mouse.x, -mouse.y) * 180 / PI;
+
+
+		// Update reflection barrier
+		//vec2 forward = { mouse.x, mouse.y };
+		//forward = normalize(forward);
+		//reflector_barrier->position = gameObject->position + forward * barrier_offset;
+		//reflector_barrier->angle = gameObject->angle;
+
+	}
 };
 
 struct ReflectorBarrier : public Behaviour {

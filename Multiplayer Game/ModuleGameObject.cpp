@@ -98,14 +98,14 @@ void ModuleGameObject::calculateInterpolation(uint32 not_update)
 {
 	uint32 reflector_id = 0;
 	GameObject* curr_player = GetGameObejctFromNetworkID(not_update);
-	if (curr_player)
+	/*if (curr_player)
 	{
 		if (curr_player->tag == REFLECTOR)
 		{
 			if(Reflector* behaviour = (Reflector*)curr_player->behaviour)
 				reflector_id = behaviour->reflector_barrier->networkId;
 		}
-	}
+	}*/
 
 
 	for (GameObject &gameObject : App->modGameObject->gameObjects)

@@ -123,6 +123,10 @@ void ModuleNetworkingClient::onGui()
 
 			ImGui::Separator();
 
+			ImGui::Checkbox("Clientside Prediction", &clientside_prediction);
+
+			ImGui::Separator();
+
 			ImGui::Text("Input:");
 			ImGui::InputFloat("Delivery interval (s)", &inputDeliveryIntervalSeconds, 0.01f, 0.1f, 4);
 		}
@@ -203,8 +207,20 @@ void ModuleNetworkingClient::onUpdate()
 
 		// ClientSidePrediction
 		if (GameObject* playerGO = App->modLinkingContext->getNetworkGameObject(networkId)) {
-			playerGO->position = playerGO->final_pos;
-			playerGO->angle = playerGO->final_angle;
+			if (clientside_prediction)
+			{
+
+				MouseController mouse;
+				vec2 winSize = App->modRender->getWindowsSize();
+				mouse.x = Mouse.x - winSize.x / 2;
+				mouse.y = Mouse.y - winSize.y / 2;
+				playerGO->behaviour->onInput(Input, mouse);
+			}
+
+			else {
+				playerGO->position = playerGO->final_pos;
+				playerGO->angle = playerGO->final_angle;
+			}
 		}
 
 		secondsSinceLastInputDelivery += Time.deltaTime;
@@ -311,6 +327,9 @@ GameObject* ModuleNetworkingClient::spawnPlayer(uint32 networkID, uint8 tag, uin
 
 	switch (tag) {
 		case ObjectType::SHOOTER: {
+			if (networkID == networkId)
+				gameObject->behaviour = new ShooterClient(gameObject);
+
 			if(team == ObjectTeam::TEAM_1)
 				gameObject->texture = App->modResources->T1_Shooter;
 			else {
@@ -320,6 +339,8 @@ GameObject* ModuleNetworkingClient::spawnPlayer(uint32 networkID, uint8 tag, uin
 			break;
 		}
 		case ObjectType::REFLECTOR: {
+			if (networkID == networkId)
+				gameObject->behaviour = new ReflectorClient(gameObject);
 			if (team == ObjectTeam::TEAM_1)
 				gameObject->texture = App->modResources->T1_Reflector;
 			else 
