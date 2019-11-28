@@ -259,9 +259,6 @@ void ModuleNetworkingServer::onUpdate()
 				// Disconnect client if it hasen't send ping for a while
 				manageReceivePing(&clientProxy);
 
-				OutputMemoryStream packet;
-				packet << ServerMessage::Replication;
-
 				// TODO(jesus): If the replication interval passed and the replication manager of this proxy
 				//              has pending data, write and send a replication packet to this client.
 			}

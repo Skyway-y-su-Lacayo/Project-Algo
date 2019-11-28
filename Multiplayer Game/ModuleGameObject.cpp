@@ -109,7 +109,8 @@ void ModuleGameObject::calculateInterpolation(uint32 not_update)
 
 	for (GameObject &gameObject : App->modGameObject->gameObjects)
 	{
-		if (gameObject.state == GameObject::NON_EXISTING  || gameObject.networkId == not_update || gameObject.networkId == reflector_id || gameObject.networkId == 0)
+		if (gameObject.state == GameObject::NON_EXISTING  || gameObject.networkId == not_update || 
+			gameObject.networkId == reflector_id || gameObject.tag == ObjectType::HARD_LASER || gameObject.tag == ObjectType::SOFT_LASER || gameObject.networkId == 0)
 			continue;
 
 		float interpolation_coeficient = gameObject.timeSinceLastUpdate.ReadSeconds() / App->modNetServer->getReplicationCadence();

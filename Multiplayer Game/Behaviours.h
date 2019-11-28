@@ -284,3 +284,11 @@ struct Laser : public Behaviour
 		if (secondsSinceCreation > lifetimeSeconds) NetworkDestroy(gameObject);
 	}
 };
+
+struct ClientLaser : public Behaviour 	
+{
+	void update() override {
+		const float pixelsPerSecond = 1000.0f;
+		gameObject->position += vec2FromDegrees(gameObject->angle) * pixelsPerSecond * Time.deltaTime;
+	}
+};
