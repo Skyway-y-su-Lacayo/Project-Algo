@@ -589,7 +589,11 @@ GameObject * ModuleNetworkingServer::spawnBullet(GameObject *parent, ColliderTyp
 
 
 
-	gameObject->team = parent->team;
+	if (parent->team == TEAM_1)
+		gameObject->team = TEAM_2;
+	else
+		gameObject->team = TEAM_1;
+
 	// Assign a new network identity to the object
 	App->modLinkingContext->registerNetworkGameObject(gameObject);
 
