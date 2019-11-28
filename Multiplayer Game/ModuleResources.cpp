@@ -40,10 +40,10 @@ bool ModuleResources::init()
 	loadTextureAsync("T1_HARD_PROJECTILE.png", &T1_HardProjectile);
 	// T2 Textures
 	loadTextureAsync("T2_JAYCE_BODY.png", &T2_Shooter);
-	loadTextureAsync("T1_SOFT_PROJECTILE.png", &T2_SoftProjectile); // TODO(Lorien)
+	loadTextureAsync("T2_SOFT_PROJECTILE.png", &T2_SoftProjectile); // TODO(Lorien)
 	loadTextureAsync("T2_MAFIA_BRAUM_BODY.png", &T2_Reflector);
 	loadTextureAsync("T2_MAFIA_BRAUM_SHIELD.png", &T2_ReflectorBarrier);
-	loadTextureAsync("T1_HARD_PROJECTILE.png", &T2_HardProjectile); // TODO(Lorien)
+	loadTextureAsync("T2_HARD_PROJECTILE.png", &T2_HardProjectile); // TODO(Lorien)
 
 #endif
 

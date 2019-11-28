@@ -429,6 +429,8 @@ GameObject* ModuleNetworkingClient::spawnBullet(uint32 networkID, uint8 tag, uin
 	// Assign tag
 	gameObject->tag = tag;
 
+	//Assign order
+	gameObject->order = -1;
 	// Assign a new network identity to the object
 	App->modLinkingContext->registerNetworkGameObjectWithNetworkId(gameObject, networkID);
 

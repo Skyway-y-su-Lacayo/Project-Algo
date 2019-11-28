@@ -48,7 +48,7 @@ bool DeliveryManager::processSequenceNumber(const InputMemoryStream & packet)
 	
 	if (current_seq >= seq_number)
 	{
-		seq_number = current_seq;
+		seq_number = current_seq + 1;
 		ret = true;
 	}
 	else
