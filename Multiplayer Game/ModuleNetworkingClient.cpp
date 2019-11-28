@@ -374,6 +374,8 @@ GameObject* ModuleNetworkingClient::spawnReflectorBarrier(uint32 networkID, uint
 		gameObject->texture = App->modResources->T1_ReflectorBarrier;
 	else 
 		gameObject->texture = App->modResources->T2_ReflectorBarrier;
+
+	gameObject->team = team;
 	// No collider needed
 
 	// No behaviour needed
