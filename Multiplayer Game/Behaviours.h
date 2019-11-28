@@ -287,20 +287,16 @@ struct ReflectorClient : public Behaviour
 struct ReflectorBarrier : public Behaviour {
 
 	bool create_bullet = false;
-	ObjectTeam bullet_team = NO_TEAM;
 
 	void update() override {
 		if (create_bullet) {
 			create_bullet = false;
-			GameObject tmp = *gameObject;
-			tmp.team = bullet_team;
-			GameObject* Bullet = App->modNetServer->spawnBullet(&tmp, ColliderType::HardLaser);
+			GameObject* Bullet = App->modNetServer->spawnBullet(gameObject, ColliderType::HardLaser);
 		}
 	}
 	void onCollisionTriggered(Collider &c1, Collider &c2) override {
-		if (c2.type == ColliderType::SoftLaser) {
+		if (c2.type == ColliderType::SoftLaser && c1.gameObject->team == c2.gameObject->team) {
 			NetworkDestroy(c2.gameObject); // Destroy the laser
-			bullet_team = (ObjectTeam)c2.gameObject->team;
 			create_bullet = true; // Can't create colliders in the middle of an iteration
 		}
 	}
