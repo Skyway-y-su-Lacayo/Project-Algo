@@ -109,10 +109,7 @@ void ModuleGameObject::calculateInterpolation(uint32 not_update)
 
 	for (GameObject &gameObject : App->modGameObject->gameObjects)
 	{
-		//if (gameObject.tag == ObjectType::REFLECTOR_BARRIER && curr_player->team == gameObject.team && curr_player->tag == ObjectType::REFLECTOR)
-		//	continue;
-
-		if (gameObject.state == GameObject::NON_EXISTING || gameObject.networkId == 0 || gameObject.networkId == not_update || gameObject.networkId == reflector_id) 
+		if (gameObject.state == GameObject::NON_EXISTING  || gameObject.networkId == not_update || gameObject.networkId == reflector_id || gameObject.networkId == 0)
 			continue;
 
 		float interpolation_coeficient = gameObject.timeSinceLastUpdate.ReadSeconds() / App->modNetServer->getReplicationCadence();
