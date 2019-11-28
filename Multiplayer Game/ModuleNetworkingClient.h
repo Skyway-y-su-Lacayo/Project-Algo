@@ -1,6 +1,7 @@
 #pragma once
 
 #include "ModuleNetworking.h"
+#include <vector>
 
 class ModuleNetworkingClient : public ModuleNetworking
 {
@@ -19,6 +20,8 @@ public:
 	GameObject* spawnPlayer(uint32 networkID, uint8 type, uint8 team);
 	GameObject* spawnReflectorBarrier(uint32 networkID, uint8 team);
 	GameObject* spawnBullet(uint32 networkID, uint8 type, uint8 team);
+
+	//void FillInputData(InputPacketData)
 
 
 private:
@@ -72,6 +75,7 @@ private:
 
 	// ClientSide Prediction
 	bool clientside_prediction = true;
+	uint32 current_frame = 0;
 
 	// Input ///////////
 
@@ -81,6 +85,8 @@ private:
 	InputPacketData inputData[MAX_INPUT_DATA_SIMULTANEOUS_PACKETS];
 	uint32 inputDataFront = 0;
 	uint32 inputDataBack = 0;
+
+	std::vector<InputPacketData> previous_inputs;
 
 	float inputDeliveryIntervalSeconds = 0.05f;
 	float secondsSinceLastInputDelivery = 0.0f;

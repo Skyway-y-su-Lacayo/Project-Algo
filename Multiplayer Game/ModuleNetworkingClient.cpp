@@ -228,6 +228,7 @@ void ModuleNetworkingClient::onUpdate()
 		{
 			uint32 currentInputData = inputDataBack++;
 			InputPacketData &inputPacketData = inputData[currentInputData % ArrayCount(inputData)];
+			//inputPacketData.inputFrame = current_frame;
 			inputPacketData.sequenceNumber = currentInputData;
 			inputPacketData.horizontalAxis = Input.horizontalAxis;
 			inputPacketData.verticalAxis = Input.verticalAxis;
@@ -263,6 +264,7 @@ void ModuleNetworkingClient::onUpdate()
 				sendPacket(packet, serverAddress);
 			}
 		}
+		current_frame++;
 	}
 
 	// Make the camera focus the player game object

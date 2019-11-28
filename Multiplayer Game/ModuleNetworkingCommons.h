@@ -3,6 +3,7 @@
 struct InputPacketData
 {
 	uint32 sequenceNumber = 0;
+	uint32 inputFrame = 0;
 	real32 horizontalAxis = 0.0f;
 	real32 verticalAxis = 0.0f;
 	uint16 buttonBits = 0;
