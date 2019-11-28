@@ -31,7 +31,7 @@ bool ModuleResources::init()
 	loadingFinished = true;
 	completionRatio = 1.0f;
 #else
-	loadTextureAsync("space_background.jpg", &space);
+	loadTextureAsync("grass_lol.png", &space);
 	// T1 Textures
 	loadTextureAsync("T1_ASHE_BODY.png", &T1_Shooter);
 	loadTextureAsync("T1_SOFT_PROJECTILE.png", &T1_SoftProjectile);
