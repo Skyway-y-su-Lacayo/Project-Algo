@@ -425,6 +425,11 @@ GameObject * ModuleNetworkingServer::spawnPlayerShooter(ClientProxy &clientProxy
 	clientProxy.gameObject->size = { 100, 100 };
 	// Scale
 	clientProxy.gameObject->size *= App->modGameObject->gameScale;
+
+
+	// Initial position
+	clientProxy.gameObject->position.y = -300;
+	team == ObjectTeam::TEAM_1 ? clientProxy.gameObject->position.x = -300 : clientProxy.gameObject->position.x = 300;
 	clientProxy.gameObject->angle = 45.0f;
 
 	// Shooter texture
@@ -470,6 +475,10 @@ GameObject * ModuleNetworkingServer::spawnPlayerReflector(ClientProxy & clientPr
 	clientProxy.gameObject->size = { 100, 100 };
 	// Scale
 	clientProxy.gameObject->size *= App->modGameObject->gameScale;
+	
+	// Initial position
+	clientProxy.gameObject->position.y = 300;
+	team == ObjectTeam::TEAM_1 ? clientProxy.gameObject->position.x = -300 : clientProxy.gameObject->position.x = 300;
 	clientProxy.gameObject->angle = 45.0f;
 
 	// Reflector texture
