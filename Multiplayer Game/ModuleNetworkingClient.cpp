@@ -323,7 +323,7 @@ GameObject* ModuleNetworkingClient::spawnPlayer(uint32 networkID, uint8 tag, uin
 	GameObject* gameObject = Instantiate();
 	gameObject->size = { 100, 100 };
 	gameObject->angle = 45.0f;
-
+	gameObject->team = team;
 
 	switch (tag) {
 		case ObjectType::SHOOTER: {
