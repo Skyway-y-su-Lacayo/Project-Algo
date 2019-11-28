@@ -95,11 +95,6 @@ bool  ReplicationManagerClient::readInitialPos(const InputMemoryStream & packet,
 		ret = true;
 		object->interpolationCreate();
 	}
-
-	if (object->tag == ObjectType::HARD_LASER || object->tag == ObjectType::SOFT_LASER) {
-		// 6000 because it is 1000 during 6 frames(0.1 seconds of interval between replication packets)
-		object->final_pos += vec2FromDegrees(object->angle) * 6000 * Time.deltaTime; 
-	}
 	return ret;
 }
 
