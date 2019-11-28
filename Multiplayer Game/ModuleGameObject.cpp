@@ -103,7 +103,7 @@ void ModuleGameObject::calculateInterpolation(uint32 not_update)
 
 	for (GameObject &gameObject : App->modGameObject->gameObjects)
 	{
-		if (gameObject.tag == ObjectType::REFLECTOR_BARRIER && curr_player->team == gameObject.team)
+		if (gameObject.tag == ObjectType::REFLECTOR_BARRIER && curr_player->team == gameObject.team && curr_player->tag == ObjectType::REFLECTOR)
 			continue;
 
 		if (gameObject.state == GameObject::NON_EXISTING || gameObject.networkId == 0 || gameObject.networkId == not_update || gameObject.networkId == reflector_id) 
