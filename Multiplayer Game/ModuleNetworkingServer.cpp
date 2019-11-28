@@ -197,6 +197,7 @@ void ModuleNetworkingServer::onPacketReceived(const InputMemoryStream &packet, c
 				// Read input data
 				while (packet.RemainingByteCount() > 0) {
 					InputPacketData inputData;
+					packet >> inputData.inputFrame;
 					packet >> inputData.sequenceNumber;
 					packet >> inputData.horizontalAxis;
 					packet >> inputData.verticalAxis;
@@ -225,6 +226,7 @@ void ModuleNetworkingServer::onPacketReceived(const InputMemoryStream &packet, c
 						
 						// Send imput to gameObject to process
 						proxy->gameObject->behaviour->onInput(proxy->gamepad, proxy->mouse);
+						proxy->last_frame = inputData.inputFrame;
 						proxy->nextExpectedInputSequenceNumber = inputData.sequenceNumber + 1;
 					}
 				}
@@ -710,7 +712,7 @@ void ModuleNetworkingServer::manageSendReplication() {
 				Delivery* delivery = clientProxies[i].deliveryManager.writeSequenceNumber(packet);
 				//TODO find a better way to do this
 				delivery->delegate = new ReplicationDelegate(this, clientProxies[i].replicationManager.actions);
-
+				packet << clientProxies[i].last_frame;
 				clientProxies[i].replicationManager.write(packet,delivery);
 
 				sendPacket(packet, clientProxies[i].address);

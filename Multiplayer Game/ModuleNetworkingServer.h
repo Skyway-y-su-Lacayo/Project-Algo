@@ -60,6 +60,8 @@ private:
 		Timer receivePingTimer;
 		ReplicationManagerServer replicationManager;
 		DeliveryManager deliveryManager;
+
+		uint32 last_frame = 0;
 	};
 
 
@@ -136,6 +138,7 @@ private:
 
 	void manageSendReplication();
 
+	
 
 	// Timeout/ping
 

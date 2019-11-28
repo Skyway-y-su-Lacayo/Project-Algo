@@ -117,27 +117,7 @@ struct ShooterClient : public Behaviour
 
 		if (input.verticalAxis > 0.01f)
 			gameObject->position.y -= normalizedSpeed;
-
-		// Boundaries
-
-		if (gameObject->position.x < -boundaries.x)
-			gameObject->position.x = -boundaries.y;
-
-		if (gameObject->position.x > boundaries.x)
-			gameObject->position.x = boundaries.x;
-
-		if (gameObject->position.y < -boundaries.y)
-			gameObject->position.y = -boundaries.y;
-
-		if (gameObject->position.y > boundaries.y)
-			gameObject->position.y = boundaries.y;
-
-		if (gameObject->new_packet)
-		{
-			gameObject->position = gameObject->final_pos;
-			gameObject->angle = gameObject->final_angle;
-			gameObject->new_packet = false;
-		}
+		
 		// Angle of go depending on mouse position
 		gameObject->angle = atan2(mouse.x, -mouse.y) * 180 / PI;
 	}
@@ -250,32 +230,8 @@ struct ReflectorClient : public Behaviour
 		if (input.verticalAxis > 0.01f)
 			gameObject->position.y -= normalizedSpeed;
 
-
-		// Boundaries
-
-		//if (gameObject->position.x < -boundaries.x)
-		//	gameObject->position.x = -boundaries.y;
-
-		//if (gameObject->position.x > boundaries.x)
-		//	gameObject->position.x = boundaries.x;
-
-		//if (gameObject->position.y < -boundaries.y)
-		//	gameObject->position.y = -boundaries.y;
-
-		//if (gameObject->position.y > boundaries.y)
-		//	gameObject->position.y = boundaries.y;
-
 		// Angle of go depending on mouse position
 		gameObject->angle = atan2(mouse.x, -mouse.y) * 180 / PI;
-
-
-
-		if (gameObject->new_packet)
-		{
-			gameObject->position = gameObject->final_pos;
-			gameObject->angle = gameObject->final_angle;
-			gameObject->new_packet = false;
-		}
 
 		if (reflector_barrier)
 		{

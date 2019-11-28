@@ -2,7 +2,6 @@
 #include "ModuleNetworkingClient.h"
 
 
-
 //////////////////////////////////////////////////////////////////////
 // ModuleNetworkingClient public methods
 //////////////////////////////////////////////////////////////////////
@@ -166,6 +165,7 @@ void ModuleNetworkingClient::onPacketReceived(const InputMemoryStream &packet, c
 			if (message == ServerMessage::Replication) {
 				if (deliveryManager.processSequenceNumber(packet))
 				{
+					packet >> last_server_frame;
 					replicationClient.read(packet);
 				}
 			}
@@ -205,35 +205,33 @@ void ModuleNetworkingClient::onUpdate()
 		// Interpolation: Pass the client's networkID which WON't be interpolated. We use "client side prediction" (Lorien :)
 		App->modGameObject->calculateInterpolation(networkId);
 
-		// ClientSidePrediction
-		if (GameObject* playerGO = App->modLinkingContext->getNetworkGameObject(networkId)) {
-			if (clientside_prediction)
-			{
-				MouseController mouse;
-				vec2 winSize = App->modRender->getWindowsSize();
-				mouse.x = Mouse.x - winSize.x / 2;
-				mouse.y = Mouse.y - winSize.y / 2;
-				playerGO->behaviour->onInput(Input, mouse);
-			}
 
-			else {
-				playerGO->position = playerGO->final_pos;
-				playerGO->angle = playerGO->final_angle;
-			}
-		}
+
 
 		secondsSinceLastInputDelivery += Time.deltaTime;
+
+		InputPacketData inputPacketData;
+		inputPacketData.inputFrame = current_frame;
+		inputPacketData.horizontalAxis = Input.horizontalAxis;
+		inputPacketData.verticalAxis = Input.verticalAxis;
+		inputPacketData.buttonBits = packInputControllerButtons(Input);
+
+		inputPacketData.mouse_x = Mouse.x;
+		inputPacketData.mouse_y = Mouse.y;
+		inputPacketData.mouseState = Mouse.buttons[0]; //Hopefully, right button
+
+		previous_inputs.push_back(inputPacketData);
 
 		if (inputDataBack - inputDataFront < ArrayCount(inputData))
 		{
 			uint32 currentInputData = inputDataBack++;
 			InputPacketData &inputPacketData = inputData[currentInputData % ArrayCount(inputData)];
-			//inputPacketData.inputFrame = current_frame;
+			inputPacketData.inputFrame = current_frame;
 			inputPacketData.sequenceNumber = currentInputData;
 			inputPacketData.horizontalAxis = Input.horizontalAxis;
 			inputPacketData.verticalAxis = Input.verticalAxis;
 			inputPacketData.buttonBits = packInputControllerButtons(Input);
-			
+
 			inputPacketData.mouse_x = Mouse.x;
 			inputPacketData.mouse_y = Mouse.y;
 			inputPacketData.mouseState = Mouse.buttons[0]; //Hopefully, right button
@@ -248,6 +246,7 @@ void ModuleNetworkingClient::onUpdate()
 				for (uint32 i = inputDataFront; i < inputDataBack; ++i)
 				{
 					InputPacketData &inputPacketData = inputData[i % ArrayCount(inputData)];
+					packet << current_frame;
 					packet << inputPacketData.sequenceNumber;
 					packet << inputPacketData.horizontalAxis;
 					packet << inputPacketData.verticalAxis;
@@ -264,14 +263,34 @@ void ModuleNetworkingClient::onUpdate()
 				sendPacket(packet, serverAddress);
 			}
 		}
-		current_frame++;
+		current_frame += 1;
 	}
 
 	// Make the camera focus the player game object
-	GameObject *playerGameObject = App->modLinkingContext->getNetworkGameObject(networkId);
-	if (playerGameObject != nullptr)
+	// ClientSidePrediction
+	GameObject *playerGO = App->modLinkingContext->getNetworkGameObject(networkId);
+	if (playerGO != nullptr)
 	{
-		App->modRender->cameraPosition = playerGameObject->position;
+		if (clientside_prediction)
+		{
+			if (!playerGO->new_packet)
+			{
+				MouseController mouse;
+				vec2 winSize = App->modRender->getWindowsSize();
+				mouse.x = Mouse.x - winSize.x / 2;
+				mouse.y = Mouse.y - winSize.y / 2;
+				playerGO->behaviour->onInput(Input, mouse);
+			}
+			else
+				clientSidePrediction(playerGO);
+		}
+
+		else {
+			playerGO->position = playerGO->final_pos;
+			playerGO->angle = playerGO->final_angle;
+		}
+
+		App->modRender->cameraPosition = playerGO->position;
 	}
 }
 
@@ -297,7 +316,38 @@ void ModuleNetworkingClient::onDisconnect()
 	}
 
 	deliveryManager.clear();
+	last_server_frame = 0;
 	App->modRender->cameraPosition = {};
+}
+
+void ModuleNetworkingClient::clientSidePrediction(GameObject* go)
+{
+	go->position = go->final_pos;
+	go->angle = go->final_angle;
+	go->new_packet = false;
+
+	for (auto input : previous_inputs)
+	{
+		if (input.inputFrame > last_server_frame)
+		{
+			InputController gamepad;
+			MouseController mouse;
+			gamepad.horizontalAxis = input.horizontalAxis;
+			gamepad.verticalAxis = input.verticalAxis;
+			unpackInputControllerButtons(input.buttonBits,gamepad);
+
+			// Mouse
+			// Change mouse input coordinate origin
+			vec2 winSize = App->modRender->getWindowsSize();
+			mouse.x = input.mouse_x - winSize.x / 2;
+			mouse.y = input.mouse_y - winSize.y / 2;
+			mouse.buttons[0] = input.mouseState;
+
+			// Send imput to gameObject to process
+			go->behaviour->onInput(gamepad, mouse);
+		}
+	}
+	previous_inputs.clear();
 }
 
 
