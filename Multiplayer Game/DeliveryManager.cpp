@@ -126,6 +126,14 @@ void DeliveryManager::processTimedOutPackets()
 		}
 }
 
+void DeliveryManager::clear()
+{
+	seq_number = 0;
+
+	pending_deliveries.clear();
+	pending_ack.clear();
+}
+
 ReplicationDelegate::ReplicationDelegate(ModuleNetworkingServer* networkingServer, std::vector<ReplicationCommand> actions) : networkingServer(networkingServer), actions(actions)
 {}
 
