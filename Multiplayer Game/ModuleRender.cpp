@@ -103,6 +103,7 @@ bool ModuleRender::init()
 	D3D11_SUBRESOURCE_DATA InitData = {};
 	InitData.pSysMem = vertices;
 
+	// Storing the model and UVs
 	if (g_pd3dDevice->CreateBuffer(&desc, &InitData, &g_pVertexBuffer) < 0) {
 		ELOG("d3d->CreateBuffer() failed (Vertex Buffer)");
 		return false;
@@ -434,6 +435,7 @@ void ModuleRender::renderScene()
 	unsigned int stride = sizeof(CUSTOMVERTEX);
 	unsigned int offset = 0;
 	ctx->IASetInputLayout(g_pInputLayout);
+	// This line sets the renderer to use a "model"(plane) with a certain UVs
 	ctx->IASetVertexBuffers(0, 1, &g_pVertexBuffer, &stride, &offset);
 	ctx->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 	ctx->VSSetShader(g_pVertexShader, NULL, 0);
