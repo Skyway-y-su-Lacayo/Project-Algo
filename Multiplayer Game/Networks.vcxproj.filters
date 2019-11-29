@@ -269,6 +269,9 @@
     <ClInclude Include="Timer.h">
       <Filter>Header Files\Tools</Filter>
     </ClInclude>
+    <ClInclude Include="Animation.h">
+      <Filter>Header Files\Tools</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="Game\vertex_shader.hlsl">

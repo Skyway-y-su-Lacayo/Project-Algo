@@ -382,6 +382,7 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Animation.h" />
     <ClInclude Include="Application.h" />
     <ClInclude Include="ByteSwap.h" />
     <ClInclude Include="DeliveryManager.h" />

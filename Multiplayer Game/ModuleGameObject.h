@@ -14,6 +14,9 @@ enum ObjectTeam {
 	TEAM_1,
 	TEAM_2
 };
+
+class Animation;
+
 struct GameObject
 {
 	// Interpolation (logic in Networking Client Module) - Value initialization and timer reset (Client Replication Manager)
@@ -55,6 +58,7 @@ struct GameObject
 	vec2 size = vec2{ 0.0f, 0.0f }; // NOTE(jesus): If equals 0, it takes the size of the texture
 	vec4 color = vec4{ 1.0f, 1.0f, 1.0f, 1.0f }; // NOTE(jesus): The texture will tinted with this color
 	Texture * texture = nullptr;
+	Animation* currentAnimation = nullptr; // Animations are to be contained in behaviours
 	int  order = 0;          // NOTE(jesus): determines the drawing order
 
 	// Collider component
