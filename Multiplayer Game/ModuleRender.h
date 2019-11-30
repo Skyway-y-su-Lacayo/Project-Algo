@@ -39,6 +39,7 @@ private:
 	void CleanupDeviceD3D();
 	void CreateRenderTarget();
 	void CleanupRenderTarget();
+	void ProcessAnimationUVs(Texture* texture, GameObject* go);
 
 	Texture * whitePixel = nullptr;
 	Texture * blackPixel = nullptr;
