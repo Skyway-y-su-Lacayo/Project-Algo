@@ -1,6 +1,7 @@
 #pragma once
 
 #include "ModuleNetworkingServer.h"
+#include "Animation.h"
 
 
 vec2 boundaries = { 500,500 };

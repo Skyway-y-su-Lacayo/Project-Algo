@@ -4,7 +4,7 @@
 
 #define MAX_ANIMATION_FRAMES 256
 struct AnimRect {
-	float x, y, w, h;
+	int x, y, w, h;
 };
 
 class Animation {
@@ -18,6 +18,7 @@ class Animation {
 public:
 	int pushFrame(AnimRect rect) {
 		frames[frameCount++] = rect;
+		return frameCount;
 	}
 	void setSpeed(float speed) {
 		animSpeed = speed;

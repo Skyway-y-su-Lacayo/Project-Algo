@@ -1,5 +1,6 @@
 #include "Networks.h"
 #include "ModuleRender.h"
+#include "Animation.h"
 
 
 #define SAFE_RELEASE(lp) if (lp != nullptr) { lp->Release(); lp = nullptr; }
@@ -96,9 +97,10 @@ bool ModuleRender::init()
 	};
 
 	D3D11_BUFFER_DESC desc = {};
-	desc.Usage = D3D11_USAGE_DEFAULT;
+	desc.Usage = D3D11_USAGE_DYNAMIC;
 	desc.ByteWidth = sizeof(vertices);
 	desc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
+	desc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
 
 	D3D11_SUBRESOURCE_DATA InitData = {};
 	InitData.pSysMem = vertices;
@@ -507,6 +509,8 @@ void ModuleRender::renderScene()
 		ID3D11ShaderResourceView* texture_srv = (ID3D11ShaderResourceView*)texture->shaderResource;
 		ctx->PSSetShaderResources(0, 1, &texture_srv);
 
+		// Modify vertex buffer UVs to be according to animation
+		ProcessAnimationUVs(texture, gameObject);
 		ctx->Draw(6, 0);
 	}
 
@@ -630,4 +634,58 @@ void ModuleRender::CleanupRenderTarget()
 		g_mainRenderTargetView->Release();
 		g_mainRenderTargetView = NULL;
 	}
+}
+
+void ModuleRender::ProcessAnimationUVs(Texture * texture, GameObject * go) {
+
+	ID3D11DeviceContext *ctx = g_pd3dDeviceContext;
+
+	D3D11_MAPPED_SUBRESOURCE mappedResource;
+	ZeroMemory(&mappedResource, sizeof(D3D11_MAPPED_SUBRESOURCE));
+	CUSTOMVERTEX vertices[] =
+	{
+		{ -0.5f, -0.5f,    0.f, 0.f, },
+		{ -0.5f,  0.5f,    0.f, 1.f, },
+		{  0.5f,  0.5f,    1.f, 1.f, },
+		{ -0.5f, -0.5f,    0.f, 0.f, },
+		{  0.5f,  0.5f,    1.f, 1.f, },
+		{  0.5f, -0.5f,    1.f, 0.f, },
+	};
+
+	// Modify vertices depending on animation if needed
+	if (go->currentAnimation) {
+
+		AnimRect rect = go->currentAnimation->getCurrentFrame();
+
+		float zeroX = rect.x / texture->size.x;
+		float oneX = (rect.x + rect.w) / texture->size.x;
+		float zeroY = rect.y / texture->size.y;
+		float oneY = (rect.x + rect.w) / texture->size.x;
+
+		vertices[0].u = zeroX;
+		vertices[0].v = zeroY;
+
+		vertices[1].u = zeroX;
+		vertices[1].v = oneY;
+
+		vertices[2].u = oneX;
+		vertices[2].v = oneY;
+
+		vertices[3].u = zeroX;
+		vertices[3].v = zeroY;
+
+		vertices[4].u = oneX;
+		vertices[4].v = oneY;
+
+		vertices[5].u = oneX;
+		vertices[5].v = zeroY;
+	}
+
+
+	//  Disable GPU access to the vertex buffer data.
+	ctx->Map(g_pVertexBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource);
+	//  Update the vertex buffer here.
+	memcpy(mappedResource.pData, vertices, sizeof(vertices));
+	//  Reenable GPU access to the vertex buffer data.
+	ctx->Unmap(g_pVertexBuffer, 0);
 }
