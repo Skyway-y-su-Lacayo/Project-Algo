@@ -1,3 +1,5 @@
+Lorién Portella and Lucas García Mateu
+
 BOUNCE EM UP
 Bounce em up is a 2 v 2 cooperative multiplayer top down shooter game.
 
@@ -18,6 +20,13 @@ There are two mandatory roles to be fulfilled by each team.
 WIN CONDITION
 If either the shooter or the reflector of a team are hit by reflected bullets 4 times, the oposing team is victorious, and the game will reset.
 
+FEATURES
+- Delivery Manager -> Lorién Portella
+- Client Side prediction -> Lorién Portella
+- Entity interpolation -> Lucas García
+- Animation system, modifying the original DirectX renderer (only used for player lifes, but it is there) -> Lucas García
+- Gameplay -> Lucas García
+
 CONSTRAINTS
 - The game won't start until all the players are connected.
 - Connected players need to be fulfilling the remaining roles, otherwise they will be kicked from the server.
@@ -27,8 +36,5 @@ CONSTRAINTS
 - If a player disconnects during either a match or matchmaking, all the client proxies will be destroyed in the server,
 leading to the eventual disconnection of the clients due to lack of pings
 
-FEATURES
-- Delivery Manager
-- Client Side prediction
-- Entity interpolation
-- Animation system, modifying the original DirectX renderer (only used for player lifes, but it is there)
+
+Find the source code at: https://github.com/Skyway-y-su-Lacayo/Project-Algo
