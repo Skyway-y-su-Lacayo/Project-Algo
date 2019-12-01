@@ -6,8 +6,8 @@ enum ObjectType {
 	SHOOTER, // NEEDS TO BE '2'
 	REFLECTOR, // NEEDS TOBE '3'
 	REFLECTOR_BARRIER,
-	HARD_LASER
-
+	HARD_LASER,
+	UI
 };
 enum ObjectTeam {
 	NO_TEAM,

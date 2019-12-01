@@ -293,3 +293,14 @@ struct ClientLaser : public Behaviour
 		gameObject->position += vec2FromDegrees(gameObject->angle) * pixelsPerSecond * Time.deltaTime;
 	}
 };
+
+struct ClientTeamTag : public Behaviour 	
+{
+	GameObject* player = nullptr;
+	float yOffset = -100;
+
+	void update() override {
+		gameObject->position = player->position;
+		gameObject->position.y += yOffset;
+	}
+};

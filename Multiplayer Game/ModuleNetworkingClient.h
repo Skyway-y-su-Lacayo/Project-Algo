@@ -18,6 +18,7 @@ public:
 
 
 	GameObject* spawnPlayer(uint32 networkID, uint8 type, uint8 team);
+	GameObject* spawnTeamTag(GameObject* player);
 	GameObject* spawnReflectorBarrier(uint32 networkID, uint8 team);
 	GameObject* spawnBullet(uint32 networkID, uint8 type, uint8 team);
 

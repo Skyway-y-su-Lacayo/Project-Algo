@@ -377,6 +377,7 @@ GameObject* ModuleNetworkingClient::spawnPlayer(uint32 networkID, uint8 tag, uin
 	gameObject->angle = 45.0f;
 	gameObject->team = team;
 
+	spawnTeamTag(gameObject);
 	switch (tag) {
 		case ObjectType::SHOOTER: {
 			if (networkID == networkId)
@@ -410,6 +411,29 @@ GameObject* ModuleNetworkingClient::spawnPlayer(uint32 networkID, uint8 tag, uin
 
 	// Assign a new network identity to the object
 	App->modLinkingContext->registerNetworkGameObjectWithNetworkId(gameObject, networkID);
+
+	return gameObject;
+}
+
+GameObject * ModuleNetworkingClient::spawnTeamTag(GameObject * player) {
+
+	GameObject* gameObject = Instantiate();
+	// Size of the texture
+	gameObject->angle = 0.0f;
+
+
+	gameObject->behaviour = new ClientTeamTag();
+	gameObject->behaviour->gameObject = gameObject;
+	((ClientTeamTag*)gameObject->behaviour)->player = player;
+
+	
+	player->team == ObjectTeam::TEAM_1 ? gameObject->texture = App->modResources->T1_Tag : gameObject->texture = App->modResources->T2_Tag;
+
+	// Scale
+	gameObject->size *= App->modGameObject->gameScale;
+
+	// Assign tag
+	gameObject->tag = ObjectType::UI;
 
 	return gameObject;
 }

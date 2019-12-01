@@ -11,6 +11,7 @@ public:
 	Texture *background = nullptr;
 	Texture *space = nullptr;
 
+	Texture* T1_Tag = nullptr;
 	Texture* T1_Shooter = nullptr;
 	Texture* T1_SoftProjectile = nullptr;
 	Texture* T1_Reflector = nullptr;
@@ -22,6 +23,7 @@ public:
 	Texture* T2_Reflector = nullptr;
 	Texture* T2_ReflectorBarrier = nullptr;
 	Texture* T2_HardProjectile = nullptr;
+	Texture* T2_Tag = nullptr;
 
 
 	bool finishedLoading = false;
