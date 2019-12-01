@@ -21,13 +21,16 @@ WIN CONDITION
 If either the shooter or the reflector of a team are hit by reflected bullets 4 times, the oposing team is victorious, and the game will reset.
 
 FEATURES
-- Delivery Manager -> Lorién Portella
-- Client Side prediction -> Lorién Portella
-- Entity interpolation -> Lucas García
-- Animation system, modifying the original DirectX renderer (only used for player lifes, but it is there) -> Lucas García
-- Gameplay -> Lucas García
 - Pings -> Lucas García
 - Replication -> Lucas García and Lorién Portella
+- Delivery Manager -> Lorién Portella
+- Entity interpolation -> Lucas García
+- Gameplay -> Lucas García
+- Player Client Side prediction -> Lorién Portella
+- Arrow Client Side prediction -> Lucas García
+- Animation system, modifying the original DirectX renderer (only used for player lifes, but it is there) -> Lucas García
+
+
 
 CONSTRAINTS
 - The game won't start until all the players are connected.
