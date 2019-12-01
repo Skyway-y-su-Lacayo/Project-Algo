@@ -146,6 +146,7 @@ void ReplicationDelegate::onDeliveryFailure(DeliveryManager * deliveryManager)
 			Delivery* delivery = networkingServer->clientProxies[i].deliveryManager.writeSequenceNumber(packet);
 			//TODO find a better way to do this
 			delivery->delegate = new ReplicationDelegate(networkingServer,actions);
+			packet << networkingServer->clientProxies[i].last_frame;
 			networkingServer->clientProxies[i].replicationManager.ValidateActions(&actions);
 			networkingServer->clientProxies[i].replicationManager.write(packet, delivery);
 
