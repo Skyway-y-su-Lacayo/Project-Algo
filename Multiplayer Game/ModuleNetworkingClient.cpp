@@ -408,6 +408,11 @@ GameObject* ModuleNetworkingClient::spawnPlayer(uint32 networkID, uint8 tag, uin
 		case ObjectType::SHOOTER: {
 			if (networkID == networkId)
 				gameObject->behaviour = new ShooterClient(gameObject);
+			else {
+				gameObject->behaviour = new Player;
+				gameObject->behaviour->gameObject = gameObject;
+			}
+
 
 			if(team == ObjectTeam::TEAM_1)
 				gameObject->texture = App->modResources->T1_Shooter;
@@ -420,6 +425,12 @@ GameObject* ModuleNetworkingClient::spawnPlayer(uint32 networkID, uint8 tag, uin
 		case ObjectType::REFLECTOR: {
 			if (networkID == networkId)
 				gameObject->behaviour = new ReflectorClient(gameObject);
+			else
+			{
+				gameObject->behaviour = new Player;
+				gameObject->behaviour->gameObject = gameObject;
+			}
+
 			if (team == ObjectTeam::TEAM_1)
 				gameObject->texture = App->modResources->T1_Reflector;
 			else 
@@ -448,12 +459,12 @@ GameObject * ModuleNetworkingClient::spawnTeamTag(GameObject * player) {
 	gameObject->angle = 0.0f;
 
 
-	gameObject->behaviour = new ClientTeamTag();
+	gameObject->behaviour = new PlayerHealth();
 	gameObject->behaviour->gameObject = gameObject;
-	((ClientTeamTag*)gameObject->behaviour)->player = player;
+	((PlayerHealth*)gameObject->behaviour)->player = player;
 
 	
-	player->team == ObjectTeam::TEAM_1 ? gameObject->texture = App->modResources->T1_Tag : gameObject->texture = App->modResources->T2_Tag;
+	player->team == ObjectTeam::TEAM_1 ? gameObject->texture = App->modResources->T1_Hp : gameObject->texture = App->modResources->T2_Hp;
 
 	// Scale
 	gameObject->size *= App->modGameObject->gameScale;

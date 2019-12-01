@@ -21,14 +21,16 @@ struct Behaviour
 	virtual ~Behaviour() {}
 };
 
+struct Player : public Behaviour
+{
+	uint16 lives = 4;
+	const float speed = 200.0f;
+};
+
 // Movement: WASD / PAD + Mouse for orientation
 // Action: Right click shoots a basic bullet
-struct Shooter : public Behaviour
+struct Shooter : public Player
 {
-	uint32 lives = 3;
-	const float speed = 200.0f;
-
-
 	void start() override
 	{
 
@@ -85,6 +87,9 @@ struct Shooter : public Behaviour
 				App->modNetServer->destroyClientProxyByGO(c1.gameObject);
 				lives = 0;
 			}
+			else
+				NetworkUpdate(gameObject);
+
 			
 			// NOTE(jesus): spaceship was collided by a laser
 			// Be careful, if you do NetworkDestroy(gameObject) directly,
@@ -97,10 +102,8 @@ struct Shooter : public Behaviour
 
 };
 
-struct ShooterClient : public Behaviour
+struct ShooterClient : public Player
 {
-	const float speed = 200.0f;
-
 	ShooterClient(GameObject* go) { gameObject = go; };
 
 	void onInput(const InputController &input, const MouseController &mouse) override
@@ -126,10 +129,8 @@ struct ShooterClient : public Behaviour
 // Movement: WASD / PAD + Mouse for orientation+
 // Dash?: Spacebar
 // Action: Has a reflector in front of him with the same orientation
-struct Reflector : public Behaviour {
+struct Reflector : public Player {
 
-	uint32 lives = 3;
-	const float speed = 200.0f;
 	GameObject* reflector_barrier = nullptr;
 	float barrier_offset = 50;
 
@@ -195,6 +196,8 @@ struct Reflector : public Behaviour {
 				App->modNetServer->destroyClientProxyByGO(c1.gameObject);
 				lives = 0;
 			}
+			else
+				NetworkUpdate(gameObject);
 
 			// NOTE(jesus): spaceship was collided by a laser
 			// Be careful, if you do NetworkDestroy(gameObject) directly,
@@ -208,9 +211,8 @@ struct Reflector : public Behaviour {
 	}
 };
 
-struct ReflectorClient : public Behaviour
+struct ReflectorClient : public Player
 {
-	const float speed = 200.0f;
 	GameObject* reflector_barrier = nullptr;
 	float barrier_offset = 50;
 
@@ -294,13 +296,24 @@ struct ClientLaser : public Behaviour
 	}
 };
 
-struct ClientTeamTag : public Behaviour 	
+struct PlayerHealth : public Behaviour 	
 {
 	GameObject* player = nullptr;
 	float yOffset = -100;
 
+	void start() override {
+		gameObject->currentAnimation = new Animation();
+		gameObject->currentAnimation->pushFrame({ 0,0,164,34 });
+		gameObject->currentAnimation->pushFrame({ 0,34,164,34 });
+		gameObject->currentAnimation->pushFrame({ 0,68,164,34 });
+		gameObject->currentAnimation->pushFrame({ 0,102,164,34 });
+		gameObject->currentAnimation->setStatic(true);
+	}
+
 	void update() override {
 		gameObject->position = player->position;
 		gameObject->position.y += yOffset;
+		Player* behaviour = (Player*)player->behaviour;
+		gameObject->currentAnimation->setFrame(4 - behaviour->lives);
 	}
 };

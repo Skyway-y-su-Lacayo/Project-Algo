@@ -106,9 +106,13 @@ bool ReplicationManagerClient::interpolationUpdate(const InputMemoryStream & pac
 	float angle;
 	packet >> new_pos.x; packet >> new_pos.y;
 	packet >> angle;
+	uint16 lives;
+	packet >> lives;
 
 	if (object) {
 		ret = true;
+		if(Player* behaviour = (Player*)object->behaviour)
+			behaviour->lives = lives;
 		object->interpolationUpdate(new_pos, angle);
 	}
 

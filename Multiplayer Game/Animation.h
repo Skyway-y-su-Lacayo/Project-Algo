@@ -12,7 +12,7 @@ class Animation {
 	float animSpeed = 0.2;
 	int frameCount = 0;
 	int currentFrame = 0;
-
+	bool static_animation = false;
 	float timeStarted = 0;
 
 public:
@@ -24,6 +24,15 @@ public:
 		animSpeed = speed;
 	}
 
+	void setStatic(bool static_anim) {
+		static_animation = static_anim;
+	}
+
+	void setFrame(int frame) {
+		ASSERT(frame < frameCount);
+		currentFrame = frame;
+	}
+
 	void start() {
 		timeStarted = Time.time;
 	}
@@ -31,15 +40,17 @@ public:
 	AnimRect getCurrentFrame() {
 
 		ASSERT(frameCount != 0); // No frames on the animation
-		float timeElapsed = Time.time - timeStarted;
+		if (!static_animation)
+		{
+			float timeElapsed = Time.time - timeStarted;
 
-		if (timeElapsed > 0.2) {
-			currentFrame++;
-			timeStarted = Time.time;
-			if (currentFrame > frameCount)
-				currentFrame = 0;
+			if (timeElapsed > animSpeed) {
+				currentFrame++;
+				timeStarted = Time.time;
+				if (currentFrame > frameCount)
+					currentFrame = 0;
+			}
 		}
-
 		return frames[currentFrame];
 	}
 

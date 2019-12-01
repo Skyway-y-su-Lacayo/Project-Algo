@@ -13,19 +13,19 @@ public:
 	Texture *waiting = nullptr;
 
 
-	Texture* T1_Tag = nullptr;
+	Texture* T1_Hp = nullptr;
 	Texture* T1_Shooter = nullptr;
 	Texture* T1_SoftProjectile = nullptr;
 	Texture* T1_Reflector = nullptr;
 	Texture* T1_ReflectorBarrier = nullptr;
 	Texture* T1_HardProjectile = nullptr;
 
+	Texture* T2_Hp = nullptr;
 	Texture* T2_Shooter = nullptr;
 	Texture* T2_SoftProjectile = nullptr;
 	Texture* T2_Reflector = nullptr;
 	Texture* T2_ReflectorBarrier = nullptr;
 	Texture* T2_HardProjectile = nullptr;
-	Texture* T2_Tag = nullptr;
 
 
 	bool finishedLoading = false;

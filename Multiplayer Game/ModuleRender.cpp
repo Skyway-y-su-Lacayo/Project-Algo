@@ -660,7 +660,7 @@ void ModuleRender::ProcessAnimationUVs(Texture * texture, GameObject * go) {
 		float zeroX = rect.x / texture->size.x;
 		float oneX = (rect.x + rect.w) / texture->size.x;
 		float zeroY = rect.y / texture->size.y;
-		float oneY = (rect.x + rect.w) / texture->size.x;
+		float oneY = (rect.y + rect.h) / texture->size.y;
 
 		vertices[0].u = zeroX;
 		vertices[0].v = zeroY;

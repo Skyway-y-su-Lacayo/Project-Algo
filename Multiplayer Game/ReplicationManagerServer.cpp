@@ -49,6 +49,8 @@ void ReplicationManagerServer::write(OutputMemoryStream & packet, Delivery* deli
 			{
 				GameObject* object = App->modLinkingContext->getNetworkGameObject(action.networkID);
 				writePos(packet, object);
+				Player* behaviour = (Player*)object->behaviour;
+				packet << behaviour->lives;
 				break;
 			}
 			case ReplicationAction::DESTROY:
