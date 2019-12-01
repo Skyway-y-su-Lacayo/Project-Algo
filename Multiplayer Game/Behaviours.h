@@ -83,10 +83,9 @@ struct Shooter : public Player
 		{
 			NetworkDestroy(c2.gameObject); // Destroy the laser
 			lives -= 1;
-			if (lives <= 0){
-				App->modNetServer->destroyClientProxyByGO(c1.gameObject);
-				lives = 0;
-			}
+			if (lives <= 0)
+				App->modNetServer->resetGame();
+			
 
 			
 			// NOTE(jesus): spaceship was collided by a laser
@@ -190,10 +189,8 @@ struct Reflector : public Player {
 		if (c2.type == ColliderType::HardLaser && c2.gameObject->team != gameObject->team) {
 			NetworkDestroy(c2.gameObject); // Destroy the laser
 			lives -= 1;
-			if (lives <= 0) {
-				App->modNetServer->destroyClientProxyByGO(c1.gameObject);
-				lives = 0;
-			}
+			if (lives <= 0) 
+				App->modNetServer->resetGame();
 
 			// NOTE(jesus): spaceship was collided by a laser
 			// Be careful, if you do NetworkDestroy(gameObject) directly,

@@ -111,8 +111,11 @@ bool ReplicationManagerClient::interpolationUpdate(const InputMemoryStream & pac
 
 	if (object) {
 		ret = true;
-		if(Player* behaviour = (Player*)object->behaviour)
+		if (object->tag == ObjectType::REFLECTOR || object->tag == ObjectType::SHOOTER) {
+			Player* behaviour = (Player*)object->behaviour;
 			behaviour->lives = lives;
+		}
+
 		object->interpolationUpdate(new_pos, angle);
 	}
 

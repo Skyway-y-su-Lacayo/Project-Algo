@@ -103,6 +103,7 @@ public:
 	//////////////////////////////////////////////////////////////////////
 
 	void destroyClientProxyByGO(GameObject* spaceship);
+	void resetGame();
 
 
 private:

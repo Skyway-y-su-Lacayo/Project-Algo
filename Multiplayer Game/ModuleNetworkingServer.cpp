@@ -375,6 +375,22 @@ void ModuleNetworkingServer::destroyClientProxyByGO(GameObject * spaceship) {
 	}
 }
 
+void ModuleNetworkingServer::resetGame() {
+	for (auto & clientProxy : clientProxies) {
+		if (clientProxy.connected) {
+			GameObject* resGO = clientProxy.gameObject;
+
+			// Reset Position
+			resGO->tag == ObjectType::SHOOTER ? resGO->position.y = -300 : resGO->position.y = 300;
+			resGO->team == ObjectTeam::TEAM_1 ? resGO->position.x = -300 : resGO->position.x = 300;
+
+			// Reset lifes
+			((Player*)resGO->behaviour)->lives = 4;
+		}
+	
+	}
+}
+
 void ModuleNetworkingServer::sendPacketAll(OutputMemoryStream& data) {
 
 	for (ClientProxy &clientProxy : clientProxies) {

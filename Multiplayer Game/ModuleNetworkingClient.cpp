@@ -340,6 +340,9 @@ void ModuleNetworkingClient::onDisconnect()
 		if (teamTags[i]) 
 			Destroy(teamTags[i]);
 
+	// Reset vars
+	waitingForPlayers = true;
+
 	deliveryManager.clear();
 	last_server_frame = 0;
 	App->modRender->cameraPosition = {};
@@ -455,7 +458,7 @@ GameObject* ModuleNetworkingClient::spawnPlayer(uint32 networkID, uint8 tag, uin
 GameObject * ModuleNetworkingClient::spawnTeamTag(GameObject * player) {
 
 	GameObject* gameObject = Instantiate();
-	// Size of the texture
+	gameObject->size = { 164, 34 };
 	gameObject->angle = 0.0f;
 
 
