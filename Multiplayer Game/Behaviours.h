@@ -87,8 +87,6 @@ struct Shooter : public Player
 				App->modNetServer->destroyClientProxyByGO(c1.gameObject);
 				lives = 0;
 			}
-			else
-				NetworkUpdate(gameObject);
 
 			
 			// NOTE(jesus): spaceship was collided by a laser
@@ -196,8 +194,6 @@ struct Reflector : public Player {
 				App->modNetServer->destroyClientProxyByGO(c1.gameObject);
 				lives = 0;
 			}
-			else
-				NetworkUpdate(gameObject);
 
 			// NOTE(jesus): spaceship was collided by a laser
 			// Be careful, if you do NetworkDestroy(gameObject) directly,
