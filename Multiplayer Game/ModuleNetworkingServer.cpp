@@ -281,18 +281,19 @@ void ModuleNetworkingServer::onUpdate()
 
 void ModuleNetworkingServer::onConnectionReset(const sockaddr_in & fromAddress)
 {
-	// Find the client proxy
-	ClientProxy *proxy = getClientProxy(fromAddress);
+	// Disconnect all players
+	for (int i = 0; i < MAX_CLIENTS; ++i) {
+		if (!clientProxies[i].connected) continue;
 
-	if (proxy)
-	{
+		ClientProxy *proxy = &clientProxies[i];
+	
 		// Notify game object deletion to replication managers
-		for (int i = 0; i < MAX_CLIENTS; ++i)
+		for (int j = 0; j < MAX_CLIENTS; ++j)
 		{
-			if (clientProxies[i].connected && proxy->clientId != clientProxies[i].clientId)
+			if (clientProxies[j].connected && proxy->clientId != clientProxies[j].clientId)
 			{
 				// TODO(jesus): Notify this proxy's replication manager about the destruction of this player's game object
-				clientProxies[i].replicationManager.destroy(proxy->gameObject->networkId);
+				clientProxies[j].replicationManager.destroy(proxy->gameObject->networkId);
 			}
 		}
 		// Clear the client proxy
