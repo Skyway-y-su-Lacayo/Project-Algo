@@ -32,7 +32,7 @@ FEATURES
 CONSTRAINTS
 - The game won't start until all the players are connected.
 - Connected players need to be fulfilling the remaining roles, otherwise they will be kicked from the server.
-(we run out of time to implement matchmaking :( )
+(we ran out of time to implement matchmaking :( )
 	Ej: Team 1-shooter and Team 2-shooter are connected. If a client tries to connect as a shooter from either team
 	    he will be kicked out.
 - If a player disconnects during either a match or matchmaking, all the client proxies will be destroyed in the server,
