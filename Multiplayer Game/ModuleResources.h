@@ -10,6 +10,8 @@ public:
 
 	Texture *background = nullptr;
 	Texture *space = nullptr;
+	Texture *waiting = nullptr;
+
 
 	Texture* T1_Tag = nullptr;
 	Texture* T1_Shooter = nullptr;

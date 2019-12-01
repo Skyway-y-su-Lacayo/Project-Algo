@@ -124,6 +124,15 @@ void ModuleGameObject::calculateInterpolation(uint32 not_update)
 	}
 }
 
+bool ModuleGameObject::playersReady() {
+	int playerCount = 0;
+	for (GameObject &gameObject : App->modGameObject->gameObjects)
+		if (gameObject.tag == ObjectType::SHOOTER || gameObject.tag == REFLECTOR)
+			playerCount++;
+
+	return playerCount == 4;
+}
+
 GameObject * ModuleGameObject::GetGameObejctFromNetworkID(uint32 id)
 {
 	GameObject* ret = nullptr;

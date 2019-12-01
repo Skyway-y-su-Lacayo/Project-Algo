@@ -110,6 +110,7 @@ public:
 	static void Destroy(GameObject * gameObject);
 
 	void calculateInterpolation(uint32 not_update); // Modify position and angle based on initial, final and timeSinceLastUpdate
+	bool playersReady();
 
 	GameObject* GetGameObejctFromNetworkID(uint32 id);
 

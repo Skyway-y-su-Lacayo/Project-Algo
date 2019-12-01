@@ -107,5 +107,13 @@ private:
 	DeliveryManager deliveryManager;
 
 
+	// Waiting for players
+	bool waitingForPlayers = true;
+	GameObject* waitingLabel = nullptr;
+
+	// TeamLabels
+	int teamTagsCount = 0;
+	GameObject* teamTags[4] = { nullptr };
+
 };
 

@@ -63,6 +63,13 @@ void ModuleNetworkingClient::onStart()
 	App->modGameObject->spawnBackground({ 550,0 }, { 100, 1000 });
 	// Left
 	App->modGameObject->spawnBackground({ -550,0 }, { 100, 1000 });
+
+	// Spawn "Waiting For Players" Label
+	waitingLabel = Instantiate();
+
+	waitingLabel->position = { 0,0 };
+	waitingLabel->texture = App->modResources->waiting;
+	waitingLabel->order = 10;
 }
 
 void ModuleNetworkingClient::onGui()
@@ -175,6 +182,14 @@ void ModuleNetworkingClient::onPacketReceived(const InputMemoryStream &packet, c
 
 void ModuleNetworkingClient::onUpdate()
 {
+	// Independing from the client state
+
+	if (waitingForPlayers && App->modGameObject->playersReady()) {
+		waitingForPlayers = false;
+		waitingLabel->state = GameObject::State::NON_EXISTING;
+	}
+
+
 	if (state == ClientState::Stopped) return;
 
 	if (state == ClientState::Start)
@@ -202,11 +217,13 @@ void ModuleNetworkingClient::onUpdate()
 		// Check last ping and disconnect
 		managePing(serverAddress);
 
+
+		// Can't play while waiting for other players, input is nulated
+		if (waitingForPlayers) return;
+
+
 		// Interpolation: Pass the client's networkID which WON't be interpolated. We use "client side prediction" (Lorien :)
 		App->modGameObject->calculateInterpolation(networkId);
-
-
-
 
 		secondsSinceLastInputDelivery += Time.deltaTime;
 
@@ -315,6 +332,14 @@ void ModuleNetworkingClient::onDisconnect()
 		Destroy(networkGameObjects[i]);
 	}
 
+	// Erase UI
+	Destroy(waitingLabel);
+
+	teamTagsCount = 0;
+	for (int i = 0; i < 4; i++)
+		if (teamTags[i]) 
+			Destroy(teamTags[i]);
+
 	deliveryManager.clear();
 	last_server_frame = 0;
 	App->modRender->cameraPosition = {};
@@ -377,7 +402,8 @@ GameObject* ModuleNetworkingClient::spawnPlayer(uint32 networkID, uint8 tag, uin
 	gameObject->angle = 45.0f;
 	gameObject->team = team;
 
-	spawnTeamTag(gameObject);
+	teamTags[teamTagsCount++] = spawnTeamTag(gameObject);
+
 	switch (tag) {
 		case ObjectType::SHOOTER: {
 			if (networkID == networkId)
@@ -434,6 +460,8 @@ GameObject * ModuleNetworkingClient::spawnTeamTag(GameObject * player) {
 
 	// Assign tag
 	gameObject->tag = ObjectType::UI;
+	// Ui allways blits last
+	gameObject->order = 10;
 
 	return gameObject;
 }

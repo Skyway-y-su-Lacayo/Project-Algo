@@ -32,6 +32,7 @@ bool ModuleResources::init()
 	completionRatio = 1.0f;
 #else
 	loadTextureAsync("grass_lol.png", &space);
+	loadTextureAsync("WAITING_FOR_PLAYERS.png", &waiting);
 	// T1 Textures
 	loadTextureAsync("T1_TEAM_TITLE.png", &T1_Tag);
 	loadTextureAsync("T1_ASHE_BODY.png", &T1_Shooter);
