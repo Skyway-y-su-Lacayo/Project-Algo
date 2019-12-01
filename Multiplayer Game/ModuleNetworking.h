@@ -102,10 +102,10 @@ private:
 	// Real world conditions simulation
 	//////////////////////////////////////////////////////////////////////
 
-	bool simulateLatency = true;
+	bool simulateLatency = false;
 	float simulatedLatency = 0.07f;
 	float simulatedJitter = 0.03f;
-	bool simulateDrops = true;
+	bool simulateDrops = false;
 	float simulatedDropRatio = 0.01f;
 	uint32 simulatedPacketsReceived = 0;
 	uint32 simulatedPacketsDropped = 0;
