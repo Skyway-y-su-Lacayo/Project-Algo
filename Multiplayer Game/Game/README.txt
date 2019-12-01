@@ -1,20 +1,22 @@
 BOUNCE EM UP
-Bounce em up is a 2 v 2 cooperative multiplayer top down shooter game. 
+Bounce em up is a 2 v 2 cooperative multiplayer top down shooter game.
 
+GRAPHICS
+Screenshots of Legue Of Legends 3d models (Ashe, Braum, Jayce and Mafia Braum).
 
 CONTROLS
 - Move around with WSAD
 - Aim with the mouse
-- Shoot with left click
+- Shoot with left click (Only "Shooter")
 
 MECHANICS
 There are two mandatory roles to be fulfilled by each team.
 
-Shooter: Shoots non lethal bullets which can bounce in the reflector's barrier.
-Reflector: Reflects the non lethal bullets, making them able to harm the enemy team.
+**Shooter**: Shoots non lethal bullets which can bounce in the reflector's barrier.
+**Reflector**: Reflects the non lethal bullets, making them able to harm the enemy team.
 
 WIN CONDITION
-If either the shooter or the reflector of a team are killed, the oposing team is victorious, and the game will reset.
+If either the shooter or the reflector of a team are hit by reflected bullets 4 times, the oposing team is victorious, and the game will reset.
 
 CONSTRAINTS
 - The game won't start until all the players are connected.
@@ -26,7 +28,6 @@ CONSTRAINTS
 leading to the eventual disconnection of the clients due to lack of pings
 
 FEATURES
-
 - Delivery Manager
 - Client Side prediction
 - Entity interpolation
