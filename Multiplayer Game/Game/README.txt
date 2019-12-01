@@ -26,6 +26,8 @@ FEATURES
 - Entity interpolation -> Lucas García
 - Animation system, modifying the original DirectX renderer (only used for player lifes, but it is there) -> Lucas García
 - Gameplay -> Lucas García
+- Pings -> Lucas García
+- Replication -> Lucas García and Lorién Portella
 
 CONSTRAINTS
 - The game won't start until all the players are connected.
